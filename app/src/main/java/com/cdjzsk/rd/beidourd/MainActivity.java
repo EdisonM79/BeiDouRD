@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cdjzsk.rd.beidourd.data.MyDataBaseHelper;
 import com.jzsk.seriallib.ClientStateCallback;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.SupportProtcolVersion;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	Button mBtnClose;
 
 	private SerialClient mSerialClient;
-
+	private MyDataBaseHelper dbHelper;
 	private byte[] ICA = "CCICA,0,00".getBytes();
 
 
@@ -45,10 +46,14 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		mTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
+		dbHelper = new MyDataBaseHelper(this, "BDStore.db", null, 1); // 执行这句并不会创建数据库文件
+		dbHelper.getWritableDatabase();
 	}
 
 	private void initSerialClient() {
+		//初始化串口对象
 		mSerialClient = new SerialClient();
+		//设置串口消息监听类
 		mSerialClient.setMessageListener(new MessageListener() {
 			@Override
 			public void processMessage(final BaseMessage msg) {
