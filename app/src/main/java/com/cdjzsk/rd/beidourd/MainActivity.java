@@ -1,44 +1,133 @@
 package com.cdjzsk.rd.beidourd;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.text.method.ScrollingMovementMethod;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.jzsk.seriallib.ClientStateCallback;
+import com.jzsk.seriallib.SerialClient;
+import com.jzsk.seriallib.SupportProtcolVersion;
+import com.jzsk.seriallib.conn.MessageListener;
+import com.jzsk.seriallib.msg.BaseMessage;
+import com.jzsk.seriallib.msg.msgv21.Message;
+import com.jzsk.seriallib.util.ArrayUtils;
+import com.jzsk.seriallib.util.LogUtils;
+import com.jzsk.seriallib.util.TimeUtils;
 
-	private TextView mTextMessage;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-			= new BottomNavigationView.OnNavigationItemSelectedListener() {
+public class MainActivity extends AppCompatActivity implements ClientStateCallback {
 
-		@Override
-		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-			switch (item.getItemId()) {
-				case R.id.navigation_home:
-					mTextMessage.setText(R.string.title_home);
-					return true;
-				case R.id.navigation_dashboard:
-					mTextMessage.setText(R.string.title_dashboard);
-					return true;
-				case R.id.navigation_notifications:
-					mTextMessage.setText(R.string.title_notifications);
-					return true;
-			}
-			return false;
-		}
-	};
+	private static final String TAG = LogUtils.makeTag(MainActivity.class);
+	@BindView(R.id.textView)
+	TextView mTextView;
+	@BindView(R.id.btn_regsiter)
+	Button mBtnRegsiter;
+	@BindView(R.id.btn_connect)
+	Button mBtnConnect;
+	@BindView(R.id.btn_close)
+	Button mBtnClose;
+
+	private SerialClient mSerialClient;
+
+	private byte[] ICA = "CCICA,0,00".getBytes();
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		mTextMessage = (TextView) findViewById(R.id.message);
-		BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+		ButterKnife.bind(this);
+		mTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 	}
 
+	private void initSerialClient() {
+		mSerialClient = new SerialClient();
+		mSerialClient.setMessageListener(new MessageListener() {
+			@Override
+			public void processMessage(final BaseMessage msg) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						setTxt(msg.toString());
+					}
+				});
+			}
+		});
+		//模拟串口读取模式
+		mSerialClient.setDebugMode(false);
+		//mSerialClient.setDebugMode(true);
+		mSerialClient.connect(this,SupportProtcolVersion.V21);
+	}
+
+	private void setTxt(final String msg){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				mTextView.append("\n" + TimeUtils.getCurrentTimeSmsform() + " " + msg);
+				// 简单滚动到最新一行
+				int offset = mTextView.getLineCount() * mTextView.getLineHeight();
+				if(offset>mTextView.getHeight()){
+					mTextView.scrollTo(0,offset-mTextView.getHeight());
+				}
+			}
+		});
+
+	}
+	private void closeSerialClient(){
+		if(mSerialClient != null) {
+			mSerialClient.close();
+			mSerialClient = null;
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		closeSerialClient();
+	}
+
+	@Override
+	public void connectSuccess() {
+		setTxt("串口连接成功");
+		Toast.makeText(this, "连接成功", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void connectFail() {
+		setTxt("串口连接失败");
+		Toast.makeText(this, "连接失败", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void connectionClosed() {
+		setTxt("串口连接关闭");
+		Toast.makeText(this, "已关闭连接", Toast.LENGTH_SHORT).show();
+	}
+
+	@OnClick({R.id.btn_regsiter,R.id.btn_connect, R.id.btn_close})
+	public void onViewClicked(View view) {
+		switch (view.getId()) {
+			case R.id.btn_regsiter:
+				if(mSerialClient != null && mSerialClient.isConnected()) {
+					byte[] sendMsg = ArrayUtils.concatenate(new byte[]{'$'},ICA,new byte[]{'*'},ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(ICA)}).getBytes(),new byte[]{0x0D,0x0A});
+					Message msg  = new Message(sendMsg);
+					mSerialClient.sendMessage(msg);
+					setTxt("写入成功:" + msg.toString());
+				}
+				break;
+			case R.id.btn_connect:
+				initSerialClient();
+				break;
+			case R.id.btn_close:
+				closeSerialClient();
+				break;
+		}
+	}
 }

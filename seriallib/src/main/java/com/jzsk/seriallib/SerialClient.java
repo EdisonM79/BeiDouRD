@@ -1,7 +1,6 @@
 package com.jzsk.seriallib;
 
 import android.support.annotation.NonNull;
-import android.test.suitebuilder.annotation.Suppress;
 
 import com.jzsk.seriallib.conn.Connection;
 import com.jzsk.seriallib.conn.ConnectionConfiguration;
