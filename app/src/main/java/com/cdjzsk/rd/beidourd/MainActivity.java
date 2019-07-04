@@ -1,5 +1,6 @@
 package com.cdjzsk.rd.beidourd;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
@@ -46,8 +47,13 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		mTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
+		//创建一个数据库助手类
 		dbHelper = new MyDataBaseHelper(this, "BDStore.db", null, 1); // 执行这句并不会创建数据库文件
-		dbHelper.getWritableDatabase();
+		//获取数据库输入对象，对于增删改都可以用db.execSQL(String sql);  来执行sql语句
+		//db.execSQL("insert into book(name , author, pages, price) values(\"Android数据库操作指南\", \"panda fang\", 200, 35.5)");
+		//遇到字符串要转义 有没有觉得很蛋疼， 用下面的方法就好多了
+		//db.execSQL("insert into book(name , author, pages, price) values(?, ? ,? ,? )", new String[]{"Android数据库操作指南", "panda fang", "200", "35.5"});
+		SQLiteDatabase db =  dbHelper.getWritableDatabase();
 	}
 
 	private void initSerialClient() {
