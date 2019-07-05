@@ -131,7 +131,7 @@ public class MyDataHander {
 		return null;
 	}
 
-	/**
+	/**`
 	 * 获取部分信息数据
 	 *
 	 * @param id
@@ -209,8 +209,8 @@ public class MyDataHander {
 	public void addMessage(Message message) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		if(null != message) {
-			db.execSQL("INSERT INTO message(id,sendId,receiveId,message,time) VALUES(?,?,?,?,?)",
-					new Object[]{message.getId(),message.getSendId(),message.getReceiveId(),message.getMessage(),message.getTime()});
+			db.execSQL("INSERT INTO message(sendId,receiveId,message,time) VALUES(?,?,?,?)",
+					new Object[]{message.getSendId(),message.getReceiveId(),message.getMessage(),message.getTime()});
 		}
 	}
 }

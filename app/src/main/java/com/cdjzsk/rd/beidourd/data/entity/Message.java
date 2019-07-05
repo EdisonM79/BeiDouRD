@@ -7,14 +7,19 @@ public class Message {
 	private String message;
 	private String time;
 
-	public Message(Integer id, String sendId, String receiveId, String message, String time) {
+	public Message(String sendId, String receiveId, String message, String time) {
+		this.sendId = sendId;
+		this.receiveId = receiveId;
+		this.message = message;
+		this.time = time;
+	}
+	public Message(Integer id,String sendId, String receiveId, String message, String time) {
 		this.id = id;
 		this.sendId = sendId;
 		this.receiveId = receiveId;
 		this.message = message;
 		this.time = time;
 	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -53,5 +58,16 @@ public class Message {
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+
+	@Override
+	public String toString() {
+		return "Message{" +
+				"id=" + id +
+				", sendId='" + sendId + '\'' +
+				", receiveId='" + receiveId + '\'' +
+				", message='" + message + '\'' +
+				", time='" + time + '\'' +
+				'}';
 	}
 }
