@@ -6,19 +6,17 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
+        android:layout_height="120dp"
+        android:layout_margin="6dp"
         android:background="@drawable/linearlayout_background"
-        android:layout_weight="3"
-        android:layout_margin="10dp">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_0"
@@ -36,11 +34,12 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="1" />
+
             <TextView
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"/>
+                android:layout_gravity="center"
+                android:text="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -76,8 +75,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_2"
@@ -95,17 +94,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="2" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="3"/>
+                android:text="3" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_3"
@@ -113,6 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="4" />
+
             <ProgressBar
                 android:id="@+id/vertical_progressbar3"
                 style="@style/Widget.ProgressBar.Vertical"
@@ -122,17 +124,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="4" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="4"/>
+                android:text="4" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_4"
@@ -150,17 +154,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="54" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="5"/>
+                android:text="5" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_5"
@@ -168,6 +174,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="2" />
+
             <ProgressBar
                 android:id="@+id/vertical_progressbar5"
                 style="@style/Widget.ProgressBar.Vertical"
@@ -177,17 +184,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="2" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="6"/>
+                android:text="6" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_6"
@@ -205,17 +214,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="1" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="7"/>
+                android:text="7" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_7"
@@ -233,17 +244,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="0" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="8"/>
+                android:text="8" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_8"
@@ -251,6 +264,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="4" />
+
             <ProgressBar
                 android:id="@+id/vertical_progressbar8"
                 style="@style/Widget.ProgressBar.Vertical"
@@ -260,17 +274,19 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="4" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="9"/>
+                android:text="9" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bs_tv_9"
@@ -288,19 +304,27 @@
                 android:layout_weight="1"
                 android:max="5"
                 android:progress="2" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="10"/>
+                android:text="10" />
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10">
+        android:layout_height="wrap_content">
+        <ListView
+            android:id="@+id/contacts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#c7c6c6"
+            android:dividerHeight="1dp"
+            android:listSelector="#2c97e8"
+            android:scrollbars="none"/>
 
     </LinearLayout>
 

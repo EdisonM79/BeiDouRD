@@ -2,10 +2,18 @@ package com.cdjzsk.rd.beidourd;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.cdjzsk.rd.beidourd.adapter.ContactsAdapter;
+import com.cdjzsk.rd.beidourd.bean.Contact;
 import com.cdjzsk.rd.beidourd.data.MyDataBaseHelper;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
+import com.cdjzsk.rd.beidourd.data.entity.User;
 import com.jzsk.seriallib.ClientStateCallback;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.SupportProtcolVersion;
@@ -13,6 +21,10 @@ import com.jzsk.seriallib.conn.MessageListener;
 import com.jzsk.seriallib.msg.BaseMessage;
 import com.jzsk.seriallib.util.LogUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements ClientStateCallback {
@@ -28,15 +40,22 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 //	Button mBtnClose;
 //	@BindView(R.id.btn_select)
 //	Button mBtnSelect;
+	@BindView(R.id.contacts)
+	ListView listView;//ListView组件
+
 
 	private SerialClient mSerialClient;
 	private MyDataBaseHelper dbHelper;
 	private MyDataHander myDataHander;
 	private byte[] ICA = "CCICA,0,00".getBytes();
+	private byte[] BSI = "$CCRMO,BSI,2,2*24".getBytes();
 
+	private List<Contact> contacts = new ArrayList<Contact>();//存储数据
+	private ContactsAdapter contactsAdapter;//ListView的数据适配器
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
@@ -49,6 +68,44 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		//遇到字符串要转义 有没有觉得很蛋疼， 用下面的方法就好多了
 		//db.execSQL("insert into book(name , author, pages, price) values(?, ? ,? ,? )", new String[]{"Android数据库操作指南", "panda fang", "200", "35.5"});
 //		SQLiteDatabase db =  dbHelper.getWritableDatabase();
+
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				Contact contact = (Contact)listView.getItemAtPosition(i);
+				Log.d(TAG, "onItemClick: "+ contact.getCardId());
+				//把点击到的卡号发送给Activity
+				//contactcallback.SendContactValue(contact.getCardId());
+				//Toast.makeText(getActivity(),contact.getCardId(),Toast.LENGTH_SHORT);
+			}
+		});
+		initContact();
+	}
+	public void initContact(){
+		//User user = new User("655326","Json");
+		//myDataHander.addUser(user);
+		List<User> contacts = myDataHander.getAllUser();
+		for (int i = 0; i < contacts.size(); i++) {
+			addContact(contacts.get(i).getUserId(),"2018-02-24 14:43");
+		}
+	}
+
+	/**
+	 * 添加联系人
+	 * @param cardId
+	 */
+	public void addContact(String cardId, String time){
+		Contact newContact = new Contact(cardId, R.mipmap.ic_launcher,time);
+		contacts.add(newContact);
+		//通知ListView更改数据源
+		if (contactsAdapter != null) {
+			contactsAdapter.notifyDataSetChanged();
+			listView.setSelection(contacts.size() - 1);//设置显示列表的最后一项
+		} else {
+			contactsAdapter = new ContactsAdapter(this, contacts);
+			listView.setAdapter(contactsAdapter);
+			listView.setSelection(contacts.size() - 1);
+		}
 	}
 
 	private void initSerialClient() {
@@ -76,13 +133,21 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-//				mTextView.append("\n" + TimeUtils.getCurrentTimeSmsform() + " " + msg);
-//				mTextView.append("\n" + " " + msg);
-//				// 简单滚动到最新一行
-//				int offset = mTextView.getLineCount() * mTextView.getLineHeight();
-//				if(offset>mTextView.getHeight()){
-//					mTextView.scrollTo(0,offset-mTextView.getHeight());
-//				}
+				if(msg.contains("BDICI"))
+				{
+					String[] msgList = msg.split(",");
+					String carId = msgList[1];
+					String frequency = msgList[5];
+				}
+				if(msg.contains("BDFKI"))
+				{
+					String[]  result = msg.split(",");
+				}
+				if(msg.contains("BDTXR"))
+				{
+					String[] msgList = msg.split(",");
+
+				}
 			}
 		});
 

@@ -25,5 +25,4 @@
         <item name="android:minWidth">1dip</item>
         <item name="android:maxWidth">12dip</item>
     </style>
-
 </resources>
