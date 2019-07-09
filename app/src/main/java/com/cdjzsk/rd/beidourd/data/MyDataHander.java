@@ -145,8 +145,8 @@ public class MyDataHander {
 		Cursor cursor = null;
 		try {
 			db = dbHelper.getReadableDatabase();
-			// select * from user
-			cursor = db.rawQuery("SELECT * FROM message WHERE sendId=? OR receiveId=? ORDER BY time ASC LIMIT ?,?", new String[]{id,id,String.valueOf(offset), String.valueOf(maxResult)});
+			// select * from user  DESC按照时间的最新来排序
+			cursor = db.rawQuery("SELECT * FROM message WHERE sendId=? OR receiveId=? ORDER BY time DESC LIMIT ?,?", new String[]{id,id,String.valueOf(offset), String.valueOf(maxResult)});
 			while (cursor.moveToNext()) {
 				Integer messageId = cursor.getInt(cursor.getColumnIndex("id"));
 				String sendId = cursor.getString(cursor.getColumnIndex("sendId"));
