@@ -25,8 +25,11 @@ import com.jzsk.seriallib.msg.msgv21.Message;
 import com.jzsk.seriallib.util.ArrayUtils;
 import com.jzsk.seriallib.util.LogUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	ProgressBar progressBar9;
 
 
-
+	private String mCardId;
 	private SerialClient mSerialClient;
 	private MyDataBaseHelper dbHelper;
 	private MyDataHander myDataHander;
@@ -163,8 +166,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 			}
 		});
 		//模拟串口读取模式
-		mSerialClient.setDebugMode(false);
-		//mSerialClient.setDebugMode(true);
+		//mSerialClient.setDebugMode(false);
+		mSerialClient.setDebugMode(true);
 		mSerialClient.connect(this,SupportProtcolVersion.V21);
 	}
 
@@ -178,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 					String carId = msgList[1];
 					String freqy = msgList[5];
 					cardId.setText(carId);
+					mCardId = carId;
 					frequency.setText(freqy);
 				}
 				if(msg.contains("BDFKI"))
@@ -187,7 +191,16 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 				if(msg.contains("BDTXR"))
 				{
 					String[] msgList = msg.split(",");
-
+					com.cdjzsk.rd.beidourd.data.entity.Message message = new com.cdjzsk.rd.beidourd.data.entity.Message();
+					message.setReceiveId(mCardId);
+					message.setSendId(msgList[2]);
+					int index = msgList[5].length();
+					//去掉末尾的*34/r/n
+					message.setMessage(msgList[5].substring(0,(index-5)));
+					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+					String time = sdf.format(new Date());
+					message.setTime(time);
+					myDataHander.addMessage(message);
 				}
 				if(msg.contains("BDBSI"))
 				{
@@ -210,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 					progressBar7.setProgress(Integer.parseInt(bsiList[10]));
 					bsiTv_8.setText(bsiList[11]);
 					progressBar8.setProgress(Integer.parseInt(bsiList[11]));
+					//最后一位包含波束功率，"*"和校验和
 					String last = bsiList[12].substring(0,1);
 					bsiTv_9.setText(last);
 					progressBar9.setProgress(Integer.parseInt(last));

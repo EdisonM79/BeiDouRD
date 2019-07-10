@@ -7,6 +7,10 @@ public class Message {
 	private String message;
 	private String time;
 
+	public Message()
+	{
+
+	}
 	public Message(String sendId, String receiveId, String message, String time) {
 		this.sendId = sendId;
 		this.receiveId = receiveId;

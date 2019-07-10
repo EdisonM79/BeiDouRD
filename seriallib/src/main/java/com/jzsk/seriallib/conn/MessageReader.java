@@ -116,7 +116,7 @@ class MessageReader {
 			Log.w(TAG,"debugMode is opened!");
 			while (!mDone){
 				try {
-					Thread.sleep(5 * 1000);
+					Thread.sleep(10 * 1000);
 				} catch (Exception e){
 					//ignore
 				}
