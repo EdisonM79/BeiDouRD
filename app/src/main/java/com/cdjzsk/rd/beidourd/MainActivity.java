@@ -15,14 +15,11 @@ import com.cdjzsk.rd.beidourd.adapter.ContactsAdapter;
 import com.cdjzsk.rd.beidourd.bean.Contact;
 import com.cdjzsk.rd.beidourd.data.MyDataBaseHelper;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
-import com.cdjzsk.rd.beidourd.data.entity.User;
 import com.jzsk.seriallib.ClientStateCallback;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.SupportProtcolVersion;
 import com.jzsk.seriallib.conn.MessageListener;
 import com.jzsk.seriallib.msg.BaseMessage;
-import com.jzsk.seriallib.msg.msgv21.Message;
-import com.jzsk.seriallib.util.ArrayUtils;
 import com.jzsk.seriallib.util.LogUtils;
 
 import java.text.SimpleDateFormat;
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	private MyDataBaseHelper dbHelper;
 	private MyDataHander myDataHander;
 	private byte[] ICA = "CCICA,0,00".getBytes();
-	private byte[] BSI = "CCRMO,BSI,2,2".getBytes();
+	private byte[] BSI = "CCRMO,BSI,1,1".getBytes();
 
 	private List<Contact> contacts = new ArrayList<Contact>();//存储数据
 	private ContactsAdapter contactsAdapter;//ListView的数据适配器
@@ -101,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
-		myDataHander = new MyDataHander(this);
 		initSerialClient();
+		myDataHander = new MyDataHander(this);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -114,35 +111,39 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 			}
 		});
 		initContact();
-		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, ICA, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(ICA)}).getBytes(), new byte[]{0x0D, 0x0A});
-		Message msgICA = new Message(sendMsgICA);
-		mSerialClient.sendMessage(msgICA);
-		//打开波束功率输出
-		byte[] sendMsgBSI = ArrayUtils.concatenate(new byte[]{'$'}, BSI, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(BSI)}).getBytes(), new byte[]{0x0D, 0x0A});
-		Message msgBSI = new Message(sendMsgBSI);
-		mSerialClient.sendMessage(msgBSI);
-
+//		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, ICA, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(ICA)}).getBytes(), new byte[]{0x0D, 0x0A});
+//		Message msgICA = new Message(sendMsgICA);
+//		mSerialClient.sendMessage(msgICA);
+//		//打开波束功率输出
+//		byte[] sendMsgBSI = ArrayUtils.concatenate(new byte[]{'$'}, BSI, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(BSI)}).getBytes(), new byte[]{0x0D, 0x0A});
+//		Message msgBSI = new Message(sendMsgBSI);
+//		mSerialClient.sendMessage(msgBSI);
 	}
 	public void initContact(){
 		//User user = new User("655326","Json");
 		//myDataHander.addUser(user);
-		List<User> contacts = myDataHander.getAllUser();
-		for (int i = 0; i < contacts.size(); i++) {
-			addContact(contacts.get(i).getUserId(),"2018-02-24 14:43");
-		}
+		//List<User> contacts = myDataHander.getAllUser();
+		addContact("412159","2018-02-24 14:43","0");
+		addContact("412158","2018-02-25 14:43","1");
+		addContact("412157","2018-02-26 14:43","2");
+		addContact("412156","2018-02-27 14:43","3");
+		addContact("412155","2018-02-28 14:43","4");
+		addContact("412154","2018-02-29 14:43","5");
+		addContact("412153","2018-02-20 14:43","6");
+
 	}
 
 	/**
 	 * 添加联系人
 	 * @param cardId
 	 */
-	public void addContact(String cardId, String time){
-		Contact newContact = new Contact(cardId, R.mipmap.ic_launcher,time);
+	public void addContact(String cardId, String time, String number){
+		Contact newContact = new Contact(cardId, R.mipmap.ic_launcher,time,number);
 		contacts.add(newContact);
 		//通知ListView更改数据源
 		if (contactsAdapter != null) {
 			contactsAdapter.notifyDataSetChanged();
-			listView.setSelection(contacts.size() - 1);//设置显示列表的最后一项
+			listView.setSelection(0);//设置显示列表的最后一项
 		} else {
 			contactsAdapter = new ContactsAdapter(this, contacts);
 			listView.setAdapter(contactsAdapter);
@@ -166,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 			}
 		});
 		//模拟串口读取模式
-		//mSerialClient.setDebugMode(false);
-		mSerialClient.setDebugMode(true);
+		mSerialClient.setDebugMode(false);
+		//mSerialClient.setDebugMode(true);
 		mSerialClient.connect(this,SupportProtcolVersion.V21);
 	}
 
@@ -197,9 +198,11 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 					int index = msgList[5].length();
 					//去掉末尾的*34/r/n
 					message.setMessage(msgList[5].substring(0,(index-5)));
+					//获取当前系统时间
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 					String time = sdf.format(new Date());
 					message.setTime(time);
+					//将信息存入数据库
 					myDataHander.addMessage(message);
 				}
 				if(msg.contains("BDBSI"))
@@ -244,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	protected void onDestroy() {
 		super.onDestroy();
 		closeSerialClient();
+		myDataHander = null;
 	}
 
 	@Override

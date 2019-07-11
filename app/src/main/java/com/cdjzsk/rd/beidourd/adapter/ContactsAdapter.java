@@ -68,6 +68,12 @@ public class ContactsAdapter extends BaseAdapter {
 		viewHolder.contentTv.setText(contacts.get(position).getCardId());
 		//设置时间
 		viewHolder.contactTime.setText(contacts.get(position).getTime());
+		//设置未读信息条数
+		viewHolder.number.setText(contacts.get(position).getNumber());
+		if (contacts.get(position).getNumber().equals("0"))
+		{
+			viewHolder.number.setVisibility(View.INVISIBLE);
+		}
 
 		return convertView;
 	}
@@ -80,6 +86,7 @@ public class ContactsAdapter extends BaseAdapter {
 		ImageView pictureImg;//图片
 		TextView contentTv;//内容
 		TextView contactTime;//时间
+		TextView number;//显示未读信息数量
 
 		/**
 		 * 构造器
@@ -90,6 +97,7 @@ public class ContactsAdapter extends BaseAdapter {
 			pictureImg = (ImageView) view.findViewById(R.id.picture_img);
 			contentTv = (TextView) view.findViewById(R.id.contact_name);
 			contactTime =(TextView) view.findViewById(R.id.contact_time);
+			number = (TextView) view.findViewById(R.id.tv_number);
 		}
 	}
 
