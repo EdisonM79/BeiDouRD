@@ -1,5 +1,6 @@
 package com.cdjzsk.rd.beidourd;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -235,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		Toast.makeText(this, "已关闭连接", Toast.LENGTH_SHORT).show();
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	private void initData() {
 		ListView lv = findViewById(R.id.activity_wechat_lv);
 		int[] headImgRes = {R.drawable.hdimg_3, R.drawable.group1, R.drawable.hdimg_2, R.drawable.user_2,
@@ -314,8 +316,10 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 							isSlip = false;
 							isLongClick = false;
 						}
+						v.performClick();
 						break;
 				}
+
 				return false;
 			}
 		});
