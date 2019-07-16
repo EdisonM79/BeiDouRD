@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,11 +21,14 @@ import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
 import com.cdjzsk.rd.beidourd.component.PopupMenuWindows;
 import com.cdjzsk.rd.beidourd.data.MyDataBaseHelper;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
+import com.cdjzsk.rd.beidourd.utils.HelpUtils;
 import com.jzsk.seriallib.ClientStateCallback;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.SupportProtcolVersion;
 import com.jzsk.seriallib.conn.MessageListener;
 import com.jzsk.seriallib.msg.BaseMessage;
+import com.jzsk.seriallib.msg.msgv21.Message;
+import com.jzsk.seriallib.util.ArrayUtils;
 import com.jzsk.seriallib.util.LogUtils;
 
 import java.text.SimpleDateFormat;
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	private MyDataBaseHelper dbHelper;
 	private MyDataHander myDataHander;
 	private byte[] ICA = "CCICA,0,00".getBytes();
-	private byte[] BSI = "CCRMO,BSI,1,1".getBytes();
+	private byte[] BSI = "CCRMO,BSI,2,1".getBytes();
 
 	public static final int TYPE_USER = 0x11;
 	public static final int TYPE_SERVICE = 0X12;
@@ -107,16 +111,35 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
+		//初始化串口
 		initSerialClient();
+		//初始化数据库
 		myDataHander = new MyDataHander(this);
+		//初始化模拟数据
 		initData();
-//		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, ICA, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(ICA)}).getBytes(), new byte[]{0x0D, 0x0A});
-//		Message msgICA = new Message(sendMsgICA);
-//		mSerialClient.sendMessage(msgICA);
-//		//打开波束功率输出
-//		byte[] sendMsgBSI = ArrayUtils.concatenate(new byte[]{'$'}, BSI, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(BSI)}).getBytes(), new byte[]{0x0D, 0x0A});
-//		Message msgBSI = new Message(sendMsgBSI);
-//		mSerialClient.sendMessage(msgBSI);
+
+
+		statusBarHeight = HelpUtils.getStatusBarHeight(MainActivity.this);
+
+		View view = getLayoutInflater().inflate(R.layout.activity_main, null);
+		LinearLayout linearlayout1 = (LinearLayout)view.findViewById(R.id.toolLayout);
+		LinearLayout linearlayout2 = (LinearLayout)view.findViewById(R.id.Bsi_Box);
+		//measure方法的参数值都设为0即可
+		linearlayout1.measure(0,0);
+		linearlayout2.measure(0,0);
+		toolbarHeight = linearlayout1.getMeasuredHeight();
+		//获取组件高度
+		statusBarHeight += linearlayout2.getMeasuredHeight();
+		statusBarHeight += 50;
+
+
+		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, ICA, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(ICA)}).getBytes(), new byte[]{0x0D, 0x0A});
+		Message msgICA = new Message(sendMsgICA);
+		mSerialClient.sendMessage(msgICA);
+		//打开波束功率输出
+		byte[] sendMsgBSI = ArrayUtils.concatenate(new byte[]{'$'}, BSI, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(BSI)}).getBytes(), new byte[]{0x0D, 0x0A});
+		Message msgBSI = new Message(sendMsgBSI);
+		mSerialClient.sendMessage(msgBSI);
 	}
 
 	private void initSerialClient() {
@@ -254,27 +277,32 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 
 		int[] types = {TYPE_USER, TYPE_USER, TYPE_USER, TYPE_SUBSCRIBE, TYPE_SERVICE, TYPE_SUBSCRIBE,
 				TYPE_USER, TYPE_USER, TYPE_USER, TYPE_USER};
-		//静音&已读
+		//静音
 		boolean[] isMutes = {false, true, false, false, false, false, true, false, false, false};
+		//已读
 		boolean[] isReads = {true, true, true, true, true, true, true, true, true, true};
-
+		//联系人展示列表
 		List<ContactShowInfo> infos = new LinkedList<>();
-
+		//初始化数据
 		for (int i = 0; i < headImgRes.length; i++) {
 			infos.add(i, new ContactShowInfo(headImgRes[i], usernames[i], lastMsgs[i], lastMsgTimes[i], isMutes[i], isReads[i], types[i]));
 		}
+		//初始化适配器
 		ContactAdapter adapter = new ContactAdapter(this, R.layout.item_wechat_main, infos);
+		//设置适配器
 		lv.setAdapter(adapter);
 
-
+		//触摸监听器
 		lv.setOnTouchListener(new View.OnTouchListener() {
 			int preX, preY;
+			//滑过&长按
 			boolean isSlip = false, isLongClick = false;
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				switch (event.getAction()) {
 					case MotionEvent.ACTION_DOWN:
+						//长按时间暂不响应
 						preX = (int) event.getX();
 						preY = (int) event.getY();
 						mHandler.postDelayed(() -> {
