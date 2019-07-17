@@ -1,37 +1,28 @@
 package com.cdjzsk.rd.beidourd.bean;
 
-/**
- * Created by fengshawn on 2017/8/2.
- */
-
 public class ContactShowInfo {
 
     private int headImage;
     private String username;
     private String lastMsg;
     private String lastMsgTime;
-    private boolean isMute;
-    private boolean isRead;
-    private int accountType;
+    private String isRead;
 
-    public ContactShowInfo(int headImage, String username, String lastMsg, String lastMsgTime, boolean isMute, boolean isRead, int accountType) {
+    public ContactShowInfo(int headImage, String username, String lastMsg, String lastMsgTime, String isRead) {
         this.headImage = headImage;
         this.username = username;
         this.lastMsg = lastMsg;
         this.lastMsgTime = lastMsgTime;
-        this.isMute = isMute;
         this.isRead = isRead;
-        this.accountType = accountType;
     }
 
-    public boolean isRead() {
+    public String isRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(String read) {
         isRead = read;
     }
-
 
     public int getHeadImage() {
         return headImage;
@@ -65,19 +56,4 @@ public class ContactShowInfo {
         this.lastMsgTime = lastMsgTime;
     }
 
-    public boolean isMute() {
-        return isMute;
-    }
-
-    public void setMute(boolean mute) {
-        isMute = mute;
-    }
-
-    public int getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(int accountType) {
-        this.accountType = accountType;
-    }
 }

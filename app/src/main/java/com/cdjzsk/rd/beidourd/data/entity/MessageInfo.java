@@ -1,29 +1,26 @@
 package com.cdjzsk.rd.beidourd.data.entity;
 
-public class Message {
+public class MessageInfo {
 	private Integer id;
 	private String sendId;
 	private String receiveId;
 	private String message;
 	private String time;
+	private String read;
 
-	public Message()
-	{
 
+	public MessageInfo() {
 	}
-	public Message(String sendId, String receiveId, String message, String time) {
-		this.sendId = sendId;
-		this.receiveId = receiveId;
-		this.message = message;
-		this.time = time;
-	}
-	public Message(Integer id,String sendId, String receiveId, String message, String time) {
+
+	public MessageInfo(Integer id, String sendId, String receiveId, String message, String time, String read) {
 		this.id = id;
 		this.sendId = sendId;
 		this.receiveId = receiveId;
 		this.message = message;
 		this.time = time;
+		this.read = read;
 	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -64,14 +61,11 @@ public class Message {
 		this.time = time;
 	}
 
-	@Override
-	public String toString() {
-		return "Message{" +
-				"id=" + id +
-				", sendId='" + sendId + '\'' +
-				", receiveId='" + receiveId + '\'' +
-				", message='" + message + '\'' +
-				", time='" + time + '\'' +
-				'}';
+	public String getRead() {
+		return read;
+	}
+
+	public void setRead(String read) {
+		this.read = read;
 	}
 }

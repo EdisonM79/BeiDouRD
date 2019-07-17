@@ -5,7 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.cdjzsk.rd.beidourd.data.entity.Message;
+import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
+import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.data.entity.User;
 
 import java.util.ArrayList;
@@ -114,7 +115,8 @@ public class MyDataHander {
 			while (cursor.moveToNext()) {
 				String userId = cursor.getString(cursor.getColumnIndex("id"));
 				String userName = cursor.getString(cursor.getColumnIndex("userName"));
-				users.add(new User(userId, userName));
+				Integer image = cursor.getInt(cursor.getColumnIndex("image"));
+				users.add(new User(userId, userName, image));
 			}
 			cursor.close();
 			return users;
@@ -139,8 +141,8 @@ public class MyDataHander {
 	 * @param maxResult
 	 * @return
 	 */
-	public List<Message> getScrollMessageBySendIdOrReceiveId(String id,int offset, int maxResult) {
-		List<Message> messages = new ArrayList<Message>();
+	public List<MessageInfo> getScrollMessageBySendIdOrReceiveId(String id, int offset, int maxResult) {
+		List<MessageInfo> messages = new ArrayList<MessageInfo>();
 		SQLiteDatabase db = null;
 		Cursor cursor = null;
 		try {
@@ -153,7 +155,8 @@ public class MyDataHander {
 				String receiveId = cursor.getString(cursor.getColumnIndex("receiveId"));
 				String message = cursor.getString(cursor.getColumnIndex("message"));
 				String time = cursor.getString(cursor.getColumnIndex("time"));
-				messages.add(new Message(messageId, sendId, receiveId, message, time));
+				String read = cursor.getString(cursor.getColumnIndex("read"));
+				messages.add(new MessageInfo(messageId, sendId, receiveId, message, time, read));
 			}
 			cursor.close();
 			return messages;
@@ -184,7 +187,8 @@ public class MyDataHander {
 		if (cursor.moveToFirst()) {
 			String userId = cursor.getString(cursor.getColumnIndex("id"));
 			String userName = cursor.getString(cursor.getColumnIndex("userName"));
-			return new User(userId, userName);
+			int image = cursor.getInt(cursor.getColumnIndex("image"));
+			return new User(userId, userName, image);
 		}
 		cursor.close();
 		return null;
@@ -197,8 +201,8 @@ public class MyDataHander {
 	public void addUser(User user) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		if(null != user && null != user.getUserId() && null != user.getUserName()) {
-			db.execSQL("INSERT INTO user(id,userName) values(?,?)",
-					new String[]{user.getUserId(), user.getUserName()});
+			db.execSQL("INSERT INTO user(id,userName,image) values(?,?,?)",
+					new Object[]{user.getUserId(), user.getUserName(), user.getImage()});
 		}
 	}
 
@@ -206,11 +210,21 @@ public class MyDataHander {
 	 * 新增一条消息
 	 * @param message
 	 */
-	public void addMessage(Message message) {
+	public void addMessage(MessageInfo message) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		if(null != message) {
-			db.execSQL("INSERT INTO message(sendId,receiveId,message,time) VALUES(?,?,?,?)",
-					new Object[]{message.getSendId(),message.getReceiveId(),message.getMessage(),message.getTime()});
+			db.execSQL("INSERT INTO message(sendId,receiveId,message,time,read) VALUES(?,?,?,?,?)",
+					new Object[]{message.getSendId(),message.getReceiveId(),message.getMessage(),message.getTime(),message.getRead()});
 		}
+	}
+
+	/**
+	 * 获取联系人展示列表
+	 * @return
+	 */
+	public List<ContactShowInfo> getContactShowInfo() {
+
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		Cursor cursor = db.rawQuery("SELECT * FROM message WHERE time IN (SELECT MAX(time) FROM message GROUP BY )",null);
 	}
 }

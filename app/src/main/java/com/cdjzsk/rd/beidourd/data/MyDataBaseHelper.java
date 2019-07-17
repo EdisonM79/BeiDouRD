@@ -8,18 +8,20 @@ import android.widget.Toast;
 public class MyDataBaseHelper extends SQLiteOpenHelper {
 
 	private Context mContext;
-	//创建联系人表，使用卡号做主键，另有用户名
+	//创建联系人表，使用卡号做主键，另有用户名,和头像资源位置
 	private static final String CREATE_USERS = "CREATE TABLE user (" +
 			"id VARCHAR(20) PRIMARY KEY," +
-			"userName VARCHAR(40))";
+			"userName VARCHAR(40)," +
+			"image INTRGER)";
 
-	//创建消息表，主键id自增长，发送人id为对应联系人表id，收信人id同上，消息内容，操作时间
+	//创建消息表，主键id自增长，发送人id为对应联系人表id，收信人id同上，消息内容，操作时间,是否已读
 	private static final String CREATE_MESSAGE = "CREATE TABLE message (" +
 			"id INTEGER PRIMARY KEY AUTOINCREMENT," +
 			"sendId VARCHAR(20)," +
 			"receiveId VARCHAR(20)," +
 			"message VARCHAR(400)," +
-			"time TEXT)";
+			"time TEXT,"+
+			"read CHAR(2))";
 
 	public MyDataBaseHelper(Context context, String name,SQLiteDatabase.CursorFactory factory, int version){
 		super(context, name, factory, version);
