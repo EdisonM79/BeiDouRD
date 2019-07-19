@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -16,11 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cdjzsk.rd.beidourd.adapter.ContactAdapter;
-import com.cdjzsk.rd.beidourd.adapter.SimpleMenuAdapter;
 import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
-import com.cdjzsk.rd.beidourd.component.PopupMenuWindows;
-import com.cdjzsk.rd.beidourd.data.MyDataBaseHelper;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
+import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
+import com.cdjzsk.rd.beidourd.data.entity.User;
 import com.cdjzsk.rd.beidourd.utils.HelpUtils;
 import com.jzsk.seriallib.ClientStateCallback;
 import com.jzsk.seriallib.SerialClient;
@@ -32,7 +30,6 @@ import com.jzsk.seriallib.util.ArrayUtils;
 import com.jzsk.seriallib.util.LogUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 
 	private String mCardId;
 	private SerialClient mSerialClient;
-	private MyDataBaseHelper dbHelper;
 	private MyDataHander myDataHander;
 	private byte[] ICA = "CCICA,0,00".getBytes();
 	private byte[] BSI = "CCRMO,BSI,2,1".getBytes();
@@ -103,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	public static final int TYPE_SERVICE = 0X12;
 	public static final int TYPE_SUBSCRIBE = 0x13;
 	private int toolbarHeight, statusBarHeight;
+	//联系人展示列表
+	List<ContactShowInfo> infos = new LinkedList<>();
 
 	private Handler mHandler = new Handler();
 	@Override
@@ -183,18 +181,18 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 				if(msg.contains("BDTXR"))
 				{
 					String[] msgList = msg.split(",");
-					com.cdjzsk.rd.beidourd.data.entity.Message message = new com.cdjzsk.rd.beidourd.data.entity.Message();
-					message.setReceiveId(mCardId);
-					message.setSendId(msgList[2]);
+					MessageInfo messageInfo = new MessageInfo();
+					messageInfo.setReceiveId(mCardId);
+					messageInfo.setSendId(msgList[2]);
 					int index = msgList[5].length();
 					//去掉末尾的*34/r/n
-					message.setMessage(msgList[5].substring(0,(index-5)));
+					messageInfo.setMessage(msgList[5].substring(0,(index-5)));
 					//获取当前系统时间
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 					String time = sdf.format(new Date());
-					message.setTime(time);
+					messageInfo.setTime(time);
 					//将信息存入数据库
-					myDataHander.addMessage(message);
+					myDataHander.addMessage(messageInfo);
 				}
 				if(msg.contains("BDBSI"))
 				{
@@ -262,30 +260,20 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	@SuppressLint("ClickableViewAccessibility")
 	private void initData() {
 		ListView lv = findViewById(R.id.activity_wechat_lv);
-		int[] headImgRes = {R.drawable.hdimg_3, R.drawable.group1, R.drawable.hdimg_2, R.drawable.user_2,
-				R.drawable.user_3, R.drawable.user_4, R.drawable.user_5, R.drawable.hdimg_4,
-				R.drawable.hdimg_5, R.drawable.hdimg_6};
-
-		String[] usernames = {"Fiona", "  ...   ", "冯小", "深圳社保", "服务通知", "招商银行信用卡",
-				"箫景、Fiona", "吴晓晓", "肖箫", "唐小晓"};
-		//最新消息
-		String[] lastMsgs = {"我看看", "吴晓晓：无人超市啊", "最近在忙些什么", "八月一号猛料，内地社保在这2...",
-				"微信支付凭证", "#今日签到#你能到大的，比想象...", "箫景:准备去哪嗨", "[Video Call]", "什么东西？", "[微信红包]"};
-
-		String[] lastMsgTimes = {"17:40", "10:56", "7月26日", "昨天", "7月27日", "09:46",
-				"7月18日", "星期一", "7月26日", "4月23日"};
-
-		int[] types = {TYPE_USER, TYPE_USER, TYPE_USER, TYPE_SUBSCRIBE, TYPE_SERVICE, TYPE_SUBSCRIBE,
-				TYPE_USER, TYPE_USER, TYPE_USER, TYPE_USER};
-		//静音
-		boolean[] isMutes = {false, true, false, false, false, false, true, false, false, false};
-		//已读
-		boolean[] isReads = {true, true, true, true, true, true, true, true, true, true};
-		//联系人展示列表
-		List<ContactShowInfo> infos = new LinkedList<>();
+		List<User> contacts = myDataHander.getAllUser();
 		//初始化数据
-		for (int i = 0; i < headImgRes.length; i++) {
-			infos.add(i, new ContactShowInfo(headImgRes[i], usernames[i], lastMsgs[i], lastMsgTimes[i], isMutes[i], isReads[i], types[i]));
+		for (int i = 0; i < contacts.size(); i++) {
+			String others = contacts.get(i).getUserId();
+			int image = contacts.get(i).getImage();
+			String name = contacts.get(i).getUserName();
+			MessageInfo messageInfo = myDataHander.getContactShowInfoByCardId(mCardId,others);
+			boolean read;
+			if(messageInfo.getRead().equals("1")) {
+				read = true;
+			} else {
+				read = false;
+			}
+			infos.add(i, new ContactShowInfo(image, name, messageInfo.getMessage(), messageInfo.getTime(),read));
 		}
 		//初始化适配器
 		ContactAdapter adapter = new ContactAdapter(this, R.layout.item_wechat_main, infos);
@@ -311,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 							int y = (int) event.getY();
 							//延时500ms后，其Y的坐标加入了Toolbar和statusBar高度
 							int position = lv.pointToPosition(x, y - toolbarHeight - statusBarHeight);
-							initPopupMenu(v, x, y, adapter, position, infos);
+							//initPopupMenu(v, x, y, adapter, position, infos);
 
 						}, 500);
 						break;
@@ -337,8 +325,10 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 							int position = lv.pointToPosition(preX, preY);
 
 							Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-							intent.putExtra("name", usernames[position]);
-							intent.putExtra("profileId", headImgRes[position]);
+							String name = infos.get(position).getUsername();
+							int image = infos.get(position).getHeadImage();
+							intent.putExtra("name", name);
+							intent.putExtra("profileId", image);
 							startActivity(intent);
 						} else {
 							isSlip = false;
@@ -378,76 +368,6 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		datas.remove(position);
 		adapter.notifyDataSetChanged();
 	}
-
-	/**
-	 * 初始化popup菜单
-	 */
-	private void initPopupMenu(View anchorView, int posX, int posY, ContactAdapter adapter, int itemPos, List<ContactShowInfo> data) {
-		List<String> list = new ArrayList<>();
-		ContactShowInfo showInfo = data.get(itemPos);
-		//初始化弹出菜单项
-		switch (showInfo.getAccountType()) {
-			case TYPE_SERVICE:
-				list.clear();
-				if (showInfo.isRead())
-					list.add("标为未读");
-				else
-					list.add("标为已读");
-				list.add("删除该聊天");
-				break;
-
-			case TYPE_SUBSCRIBE:
-				list.clear();
-				if (showInfo.isRead())
-					list.add("标为未读");
-				else
-					list.add("标为已读");
-				list.add("置顶公众号");
-				list.add("取消关注");
-				list.add("删除该聊天");
-				break;
-
-			case TYPE_USER:
-				list.clear();
-				if (showInfo.isRead())
-					list.add("标为未读");
-				else
-					list.add("标为已读");
-				list.add("置顶聊天");
-				list.add("删除该聊天");
-				break;
-		}
-		SimpleMenuAdapter<String> menuAdapter = new SimpleMenuAdapter<>(this, R.layout.item_menu, list);
-		PopupMenuWindows ppm = new PopupMenuWindows(this, R.layout.popup_menu_general_layout, menuAdapter);
-		int[] posArr = ppm.reckonPopWindowShowPos(posX, posY);
-		ppm.setAutoFitStyle(true);
-		ppm.setOnMenuItemClickListener((parent, view, position, id) -> {
-
-			switch (list.get(position)) {
-				case "标为未读":
-					setIsRead(false, itemPos, adapter, data);
-					break;
-
-				case "标为已读":
-					setIsRead(true, itemPos, adapter, data);
-					break;
-
-				case "置顶聊天":
-				case "置顶公众号":
-					stickyTop(adapter, data, itemPos);
-					break;
-
-				case "取消关注":
-				case "删除该聊天":
-					deleteMsg(itemPos, adapter, data);
-					break;
-			}
-			ppm.dismiss();
-		});
-		ppm.showAtLocation(anchorView, Gravity.NO_GRAVITY, posArr[0], posArr[1]);
-	}
-
-
 	/**
 	 * 置顶item
 	 *

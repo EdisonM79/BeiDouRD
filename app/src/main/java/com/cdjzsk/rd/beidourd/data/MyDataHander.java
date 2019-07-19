@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.data.entity.User;
 
@@ -219,12 +218,25 @@ public class MyDataHander {
 	}
 
 	/**
-	 * 获取联系人展示列表
+	 * 获取与某人的最新信息
 	 * @return
 	 */
-	public List<ContactShowInfo> getContactShowInfo() {
+	public MessageInfo getContactShowInfoByCardId(String myCardId, String otherCardId) {
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		Cursor cursor = db.rawQuery("SELECT * FROM message WHERE time IN (SELECT MAX(time) FROM message GROUP BY )",null);
+		Cursor cursor = db.rawQuery("SELECT * FROM message WHERE (sendId = ? AND receiveId = ?) OR (sendId = ? AND receiveId = ?)  ORDER BY time DESC LIMIT 1",
+				new String[]{myCardId,otherCardId,otherCardId,myCardId});
+		MessageInfo messageInfo = new MessageInfo();
+		if(cursor.moveToFirst()) {
+			messageInfo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+			messageInfo.setMessage(cursor.getString(cursor.getColumnIndex("message")));
+			messageInfo.setRead(cursor.getString(cursor.getColumnIndex("read")));
+			messageInfo.setReceiveId(cursor.getString(cursor.getColumnIndex("receiveId")));
+			messageInfo.setSendId(cursor.getString(cursor.getColumnIndex("sendId")));
+			messageInfo.setTime(cursor.getString(cursor.getColumnIndex("time")));
+			return messageInfo;
+		}
+		cursor.close();
+		return null;
 	}
 }

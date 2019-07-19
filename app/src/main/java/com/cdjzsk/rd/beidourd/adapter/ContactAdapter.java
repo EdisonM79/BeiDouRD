@@ -54,10 +54,7 @@ public class ContactAdapter extends ArrayAdapter {
         vh.lastMsgTime.setText(contactInfo.getLastMsgTime());
         vh.username.setText(contactInfo.getUsername());
         vh.lastMsg.setText(contactInfo.getLastMsg());
-        if (contactInfo.isMute())
-            vh.mute.setVisibility(View.VISIBLE);
-        else
-            vh.mute.setVisibility(View.GONE);
+        vh.mute.setVisibility(View.GONE);
 
         if (contactInfo.isRead()) {
             vh.badge.setVisibility(View.GONE);

@@ -6,9 +6,9 @@ public class ContactShowInfo {
     private String username;
     private String lastMsg;
     private String lastMsgTime;
-    private String isRead;
+    private boolean isRead;
 
-    public ContactShowInfo(int headImage, String username, String lastMsg, String lastMsgTime, String isRead) {
+    public ContactShowInfo(int headImage, String username, String lastMsg, String lastMsgTime, boolean isRead) {
         this.headImage = headImage;
         this.username = username;
         this.lastMsg = lastMsg;
@@ -16,11 +16,11 @@ public class ContactShowInfo {
         this.isRead = isRead;
     }
 
-    public String isRead() {
+    public boolean isRead() {
         return isRead;
     }
 
-    public void setRead(String read) {
+    public void setRead(boolean read) {
         isRead = read;
     }
 
