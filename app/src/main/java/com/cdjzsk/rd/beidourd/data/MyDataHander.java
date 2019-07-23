@@ -39,7 +39,7 @@ public class MyDataHander {
 	 *
 	 * @return
 	 */
-	public boolean isUserExit() {
+	public boolean isUserExit(String userId) {
 		int count = 0;
 
 		SQLiteDatabase db = null;
@@ -48,7 +48,7 @@ public class MyDataHander {
 		try {
 			db = dbHelper.getReadableDatabase();
 			// select count(Id) from Orders
-			cursor = db.rawQuery("SELECT COUNT (*) FROM user", null);
+			cursor = db.rawQuery("SELECT COUNT (*) FROM user WHERE id = ?", new String[]{userId});
 			if (cursor.moveToFirst()) {
 				count = cursor.getInt(0);
 			}

@@ -88,20 +88,20 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	@BindView(R.id.vertical_progressbar9)
 	ProgressBar progressBar9;
 
-
+	ListView lv;
 	private String mCardId;
 	private SerialClient mSerialClient;
 	private MyDataHander myDataHander;
 	private byte[] ICA = "CCICA,0,00".getBytes();
 	private byte[] BSI = "CCRMO,BSI,2,1".getBytes();
 
-	public static final int TYPE_USER = 0x11;
-	public static final int TYPE_SERVICE = 0X12;
-	public static final int TYPE_SUBSCRIBE = 0x13;
+	public static final String MESSAGE_READ = "1";
+	public static final String MESSAGE_NOTREAD = "0";
 	private int toolbarHeight, statusBarHeight;
 	//联系人展示列表
 	List<ContactShowInfo> infos = new LinkedList<>();
-
+	//联系人适配器
+	private ContactAdapter adapter;
 	private Handler mHandler = new Handler();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 			}
 		});
 		//模拟串口读取模式
-		mSerialClient.setDebugMode(false);
-		//mSerialClient.setDebugMode(true);
+		//mSerialClient.setDebugMode(false);
+		mSerialClient.setDebugMode(true);
 		mSerialClient.connect(this,SupportProtcolVersion.V21);
 	}
 
@@ -182,17 +182,65 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 				{
 					String[] msgList = msg.split(",");
 					MessageInfo messageInfo = new MessageInfo();
+					//接收ID
+					//messageInfo.setReceiveId(mCardId);
 					messageInfo.setReceiveId(mCardId);
-					messageInfo.setSendId(msgList[2]);
+					//发送ID
+					String userId = msgList[2];
+					messageInfo.setSendId(userId);
 					int index = msgList[5].length();
 					//去掉末尾的*34/r/n
-					messageInfo.setMessage(msgList[5].substring(0,(index-5)));
+					//消息内容
+					String message = msgList[5].substring(0,(index-5));
+					messageInfo.setMessage(message);
 					//获取当前系统时间
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 					String time = sdf.format(new Date());
+					//接收消息的本地时间
 					messageInfo.setTime(time);
+					//设置消息为未读
+					messageInfo.setRead(MESSAGE_NOTREAD);
 					//将信息存入数据库
 					myDataHander.addMessage(messageInfo);
+					//用发送人ID去查询是否是已有联系人
+					boolean save = myDataHander.isUserExit(userId);
+					//不存在，保存联系人
+					if (!save) {
+						User user = new User();
+						user.setUserId(userId);
+						//暂时先把名字设置为卡号
+						user.setUserName(userId);
+						//暂时先把头像设置为统一头像
+						user.setImage(R.drawable.hdimg_1);
+						//保存用户
+						myDataHander.addUser(user);
+
+						//将新消息添加到队列
+						infos.add(new ContactShowInfo(userId,R.drawable.hdimg_1,userId,message,time,false));
+						if (infos.size() > 1) {
+							//置顶消息
+							stickyTop(adapter,infos,infos.size()-1);
+						} else {
+							adapter.notifyDataSetChanged();
+						}
+
+					} else { //存在联系人，直接更新就可以了
+						//有新消息,需要更新联系人list
+						for (int i = 0; i < infos.size(); i++) {
+							String infoCardId = infos.get(i).getCardId();
+							if (infoCardId.equals(userId)) {
+								//设置为新的消息
+								infos.get(i).setLastMsg(message);
+								//设置为新的时间
+								infos.get(i).setLastMsgTime(time);
+								//设置消息为未读
+								infos.get(i).setRead(false);
+								//将消息置顶
+								stickyTop(adapter,infos,i);
+							}
+						}
+					}
+
 				}
 				if(msg.contains("BDBSI"))
 				{
@@ -259,7 +307,10 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 
 	@SuppressLint("ClickableViewAccessibility")
 	private void initData() {
-		ListView lv = findViewById(R.id.activity_wechat_lv);
+		/**************/
+		mCardId = "0412159";
+
+		lv = findViewById(R.id.activity_wechat_lv);
 		List<User> contacts = myDataHander.getAllUser();
 		//初始化数据
 		for (int i = 0; i < contacts.size(); i++) {
@@ -267,16 +318,17 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 			int image = contacts.get(i).getImage();
 			String name = contacts.get(i).getUserName();
 			MessageInfo messageInfo = myDataHander.getContactShowInfoByCardId(mCardId,others);
+			//判断是否已读
 			boolean read;
 			if(messageInfo.getRead().equals("1")) {
 				read = true;
 			} else {
 				read = false;
 			}
-			infos.add(i, new ContactShowInfo(image, name, messageInfo.getMessage(), messageInfo.getTime(),read));
+			infos.add(i, new ContactShowInfo(others, image, name, messageInfo.getMessage(), messageInfo.getTime(),read));
 		}
 		//初始化适配器
-		ContactAdapter adapter = new ContactAdapter(this, R.layout.item_wechat_main, infos);
+		adapter = new ContactAdapter(this, R.layout.item_wechat_main, infos);
 		//设置适配器
 		lv.setAdapter(adapter);
 
@@ -343,6 +395,9 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		});
 	}
 
+	private void updateContacts(ContactAdapter adapter, List<ContactShowInfo> datas) {
+
+	}
 	/**
 	 * 设置已读还是未读
 	 *
