@@ -9,6 +9,7 @@ public class ContactShowInfo {
     private String lastMsgTime;
     private boolean isRead;
 
+
     public ContactShowInfo(String cardId, int headImage, String username, String lastMsg, String lastMsgTime, boolean isRead) {
         this.cardId = cardId;
         this.headImage = headImage;
