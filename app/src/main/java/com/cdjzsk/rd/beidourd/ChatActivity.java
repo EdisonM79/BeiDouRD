@@ -1,5 +1,6 @@
 package com.cdjzsk.rd.beidourd;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,8 +21,12 @@ import android.widget.TextView;
 
 import com.cdjzsk.rd.beidourd.adapter.ChatAdapter;
 import com.cdjzsk.rd.beidourd.bean.MsgData;
+import com.cdjzsk.rd.beidourd.data.MyDataHander;
+import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.utils.HelpUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -38,6 +43,9 @@ public class ChatActivity extends AppCompatActivity {
     public final static int TYPE_TIME_STAMP = 0x23;
 
     private int profileId = R.drawable.hdimg_3;
+    private String cardId;
+    private MyDataHander myDataHander;
+    private Activity activity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.activity_wechat_chat_tv_name);
         String name = getIntent().getStringExtra("name");
         profileId = getIntent().getIntExtra("profileId", R.drawable.hdimg_3);
+        cardId = getIntent().getStringExtra("id");
         if (name != null) {
             tv.setText(name);
         }
@@ -67,7 +76,6 @@ public class ChatActivity extends AppCompatActivity {
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
         RecyclerView rv = findViewById(R.id.activity_wechat_chat_rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
-
 
         iv_back.setOnClickListener((v) -> finish());
         btn_send.startAnimation(getVisibleAnim(false, btn_send));
@@ -103,16 +111,27 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
-        String[] msgs = {"在吗", "不在", "不在怎么回消息的", "我是天才机器人", "机器人这么智能啊", "是啊，时代在发展", "那你唱歌看看"
-                , "你叫唱就唱啊，多没面子", "那你能干嘛", "啥都不能", "那你有啥用？", "没啥用你和我聊啥", "我想看下有到底有啥用",
-                "你这智商看不出来的", "你智商能看出来啥？", "你智商不足", "不带你这么聊天的...", "那你说应该怎么聊天才对？",
-                "没啥对不对就是瞎聊", "看到一条新闻\"43岁男友不回家带饭 27岁女友放火点房子涉刑罪\" ， 好逗！！！", "哈哈哈哈~~~"};
+        myDataHander =  MainActivity.instance.getMyDataHander();
+        List<MessageInfo> oldMsgs = myDataHander.getScrollMessageBySendIdOrReceiveId(cardId,0,20);
         List<MsgData> data = new ArrayList<>();
 
-        for (int i = 0; i < msgs.length; i++) {
-            MsgData msgData = new MsgData(msgs[i], HelpUtils.getCurrentMillisTime(), i % 2 == 0 ? profileId : R.drawable.hdimg_1
-                    , i % 2 == 0 ? TYPE_RECEIVER_MSG : TYPE_SENDER_MSG);
+
+        for (int i = 0; i < oldMsgs.size(); i++) {
+	        //Java中String类型转换成数据库中的日期类型，添加到数据库
+	        //创建sdf对象，指定日期格式类型
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        //sdf将字符串转化成java.util.Date
+	        java.util.Date parse=null;
+	        String timeString = oldMsgs.get(i).getTime();
+	        try {
+		        parse = sdf.parse(timeString);
+	        } catch (ParseException e) {
+		        e.printStackTrace();
+	        }
+	        //java.util.Date转换成long
+	        long time = parse.getTime();
+            MsgData msgData = new MsgData(oldMsgs.get(i).getMessage(), time, oldMsgs.get(i).getSendId().equals(cardId) ? profileId : R.drawable.hdimg_1
+                    , oldMsgs.get(i).getSendId().equals(cardId) ? TYPE_RECEIVER_MSG : TYPE_SENDER_MSG);
             data.add(i, msgData);
         }
 

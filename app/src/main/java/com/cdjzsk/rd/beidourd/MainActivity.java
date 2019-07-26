@@ -103,12 +103,14 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	//联系人适配器
 	private ContactAdapter adapter;
 	private Handler mHandler = new Handler();
+	public static MainActivity instance = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
+		instance = this;
 		//初始化串口
 		initSerialClient();
 		//初始化数据库
@@ -159,6 +161,10 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		//mSerialClient.setDebugMode(false);
 		mSerialClient.setDebugMode(true);
 		mSerialClient.connect(this,SupportProtcolVersion.V21);
+	}
+
+	public MyDataHander getMyDataHander() {
+		return this.myDataHander;
 	}
 
 	private void setTxt(final String msg){
@@ -379,8 +385,10 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 							Intent intent = new Intent(MainActivity.this, ChatActivity.class);
 							String name = infos.get(position).getUsername();
 							int image = infos.get(position).getHeadImage();
+							String id = infos.get(position).getCardId();
 							intent.putExtra("name", name);
 							intent.putExtra("profileId", image);
+							intent.putExtra("id", id);
 							startActivity(intent);
 						} else {
 							isSlip = false;
