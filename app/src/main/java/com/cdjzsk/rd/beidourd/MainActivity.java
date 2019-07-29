@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	ProgressBar progressBar9;
 
 	ListView lv;
-	private String mCardId;
-	private SerialClient mSerialClient;
+	public String mCardId;
+	public SerialClient mSerialClient;
 	private MyDataHander myDataHander;
 	private byte[] ICA = "CCICA,0,00".getBytes();
 	private byte[] BSI = "CCRMO,BSI,2,1".getBytes();
@@ -292,6 +292,11 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		closeSerialClient();
 		myDataHander = null;
 	}
+	@Override
+	protected void onResume() {
+		super.onResume();
+		updateContacts();
+	}
 
 	@Override
 	public void connectSuccess() {
@@ -403,8 +408,26 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		});
 	}
 
-	private void updateContacts(ContactAdapter adapter, List<ContactShowInfo> datas) {
+	private void updateContacts() {
 
+		List<User> contacts = myDataHander.getAllUser();
+		infos.clear();
+		//初始化数据
+		for (int i = 0; i < contacts.size(); i++) {
+			String others = contacts.get(i).getUserId();
+			int image = contacts.get(i).getImage();
+			String name = contacts.get(i).getUserName();
+			MessageInfo messageInfo = myDataHander.getContactShowInfoByCardId(mCardId,others);
+			//判断是否已读
+			boolean read;
+			if(messageInfo.getRead().equals("1")) {
+				read = true;
+			} else {
+				read = false;
+			}
+			infos.add(i, new ContactShowInfo(others, image, name, messageInfo.getMessage(), messageInfo.getTime(),read));
+		}
+		adapter.notifyDataSetChanged();
 	}
 	/**
 	 * 设置已读还是未读
@@ -438,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	 * @param datas
 	 */
 	private void stickyTop(ContactAdapter adapter, List<ContactShowInfo> datas, int position) {
-		if (position > 0) {
+		if (position >= 0) {
 			ContactShowInfo stickyTopItem = datas.get(position);
 			datas.remove(position);
 			datas.add(0, stickyTopItem);
@@ -447,4 +470,6 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		}
 		adapter.notifyDataSetChanged();
 	}
+
+
 }

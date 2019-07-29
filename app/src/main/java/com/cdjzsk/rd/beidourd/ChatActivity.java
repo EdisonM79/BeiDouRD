@@ -2,7 +2,6 @@ package com.cdjzsk.rd.beidourd;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,12 +23,15 @@ import com.cdjzsk.rd.beidourd.bean.MsgData;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.utils.HelpUtils;
+import com.cdjzsk.rd.beidourd.utils.Packages;
+import com.jzsk.seriallib.util.ArrayUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.Locale;
 
 
 /**
@@ -112,7 +114,12 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         myDataHander =  MainActivity.instance.getMyDataHander();
+        //从数据库中取出20条最新的消息数据
         List<MessageInfo> oldMsgs = myDataHander.getScrollMessageBySendIdOrReceiveId(cardId,0,20);
+        //将这20条数据设置为已读
+        for(int i = 0; i < oldMsgs.size(); i++) {
+            myDataHander.updateReadStateByMessageId(MainActivity.MESSAGE_READ, oldMsgs.get(i).getId());
+        }
         List<MsgData> data = new ArrayList<>();
 
 
@@ -137,43 +144,34 @@ public class ChatActivity extends AppCompatActivity {
 
         ChatAdapter adapter = new ChatAdapter(this, data);
         rv.setAdapter(adapter);
-        Handler smartReplyMsgHandler = new Handler();
-
 
         btn_send.setOnClickListener((v) -> {
+            //将发送的信息显示到聊天界面，并且清楚发送文本
             String sendMsg = et_msg.getText().toString();
             MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), R.drawable.hdimg_1, TYPE_SENDER_MSG);
             data.add(data.size(), msgData);
             adapter.notifyDataSetChanged();
             rv.scrollToPosition(data.size() - 1);
             et_msg.setText("");
+            //将发送的数据打包成为RD的格式
+            //通过串口将数据发送到RD模块
+            byte[] send = Packages.CCTXA(cardId, 3, sendMsg);
+            byte[] sendMsgToSerial = ArrayUtils.concatenate(new byte[]{'$'}, send, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(send)}).getBytes(), new byte[]{0x0D, 0x0A});
+            com.jzsk.seriallib.msg.msgv21.Message msg = new com.jzsk.seriallib.msg.msgv21.Message(sendMsgToSerial);
+            MainActivity.instance.mSerialClient.sendMessage(msg);
 
-            smartReplyMsgHandler.postDelayed(() -> {
-                String receiveMsg = getRandomMessage();
-                MsgData msgData1 = new MsgData(receiveMsg, HelpUtils.getCurrentMillisTime(), profileId, TYPE_RECEIVER_MSG);
-                data.add(data.size(), msgData1);
-                adapter.notifyDataSetChanged();
-                rv.scrollToPosition(data.size() - 1);
-                smartReplyMsgHandler.removeCallbacksAndMessages(null);
-            }, 500);
-
-
+            //将数据存储到数据库
+            MessageInfo messageInfo = new MessageInfo();
+            messageInfo.setRead("0");
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            String time = sdf.format(new Date());
+            messageInfo.setTime(time);
+            messageInfo.setSendId(MainActivity.instance.mCardId);
+            messageInfo.setReceiveId(cardId);
+            messageInfo.setMessage(sendMsg);
+            myDataHander.addMessage(messageInfo);
         });
     }
-
-
-    private String getRandomMessage() {
-        String[] randomMsgs = {"我是机器人", "你发再多我主人也看不到", "不要回了", "你好无聊啊", "其实你发的没点用，我会全部把它过滤掉"
-                , "因为我是机器人", "不管你信不信，反正我是不信", "再发我就神经错乱了", "我无法正常跟你沟通", "你说的我懂，我就是不做", "哈哈哈~~~"
-                , "嘻嘻", "呵呵", "你可以走了", "我没逻辑的不要奢求多了", "我就呵呵了", "什么鬼", "我不懂", "啥意思？", "好了，你可以退下了", "本机器宝宝累了"};
-        Random random = new Random();
-        int pos = random.nextInt(randomMsgs.length);
-        if (pos >= 0 && pos < randomMsgs.length - 1)
-            return randomMsgs[pos];
-        else
-            return randomMsgs[0];
-    }
-
 
     private Animation getVisibleAnim(boolean show, View view) {
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);

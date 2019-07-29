@@ -1,5 +1,6 @@
 package com.cdjzsk.rd.beidourd.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -238,5 +239,17 @@ public class MyDataHander {
 		}
 		cursor.close();
 		return null;
+	}
+
+	/**
+	 * 通过消息Id去修改是否未读
+	 * @param readState
+	 * @param messageId
+	 */
+	public void updateReadStateByMessageId(String readState, Integer messageId) {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("read",readState);
+		db.update("message",values,"id=?",new String[]{messageId.toString()});
 	}
 }
