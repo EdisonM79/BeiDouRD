@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 			}
 		});
 		//模拟串口读取模式
-		//mSerialClient.setDebugMode(false);
-		mSerialClient.setDebugMode(true);
+		mSerialClient.setDebugMode(false);
+		//mSerialClient.setDebugMode(true);
 		mSerialClient.connect(this,SupportProtcolVersion.V21);
 	}
 
@@ -199,6 +199,10 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 					//消息内容
 					String message = msgList[5].substring(0,(index-5));
 					messageInfo.setMessage(message);
+					if(null != ChatActivity.instance)
+					{
+						ChatActivity.instance.refresh(message);
+					}
 					//获取当前系统时间
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 					String time = sdf.format(new Date());

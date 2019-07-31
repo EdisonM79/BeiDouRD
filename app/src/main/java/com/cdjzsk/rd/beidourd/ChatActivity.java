@@ -1,6 +1,5 @@
 package com.cdjzsk.rd.beidourd;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -47,13 +46,19 @@ public class ChatActivity extends AppCompatActivity {
     private int profileId = R.drawable.hdimg_3;
     private String cardId;
     private MyDataHander myDataHander;
-    private Activity activity;
+    public static ChatActivity instance = null;
+    //保存数据库取出的原始数据
+    public List<MessageInfo> oldMsgs;
+    //保存用于显示的数据
+    public List<MsgData> data;
+    private ChatAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wechat_chat);
 
+        instance = this;
         HelpUtils.transparentNav(this);
         Toolbar bar = findViewById(R.id.activity_wechat_chat_toolbar);
         setSupportActionBar(bar);
@@ -115,21 +120,21 @@ public class ChatActivity extends AppCompatActivity {
 
         myDataHander =  MainActivity.instance.getMyDataHander();
         //从数据库中取出20条最新的消息数据
-        List<MessageInfo> oldMsgs = myDataHander.getScrollMessageBySendIdOrReceiveId(cardId,0,20);
+        oldMsgs = myDataHander.getScrollMessageBySendIdOrReceiveId(cardId,0,20);
         //将这20条数据设置为已读
-        for(int i = 0; i < oldMsgs.size(); i++) {
+        int length = oldMsgs.size();
+        for(int i = 0; i < length; i++) {
             myDataHander.updateReadStateByMessageId(MainActivity.MESSAGE_READ, oldMsgs.get(i).getId());
         }
-        List<MsgData> data = new ArrayList<>();
 
-
-        for (int i = 0; i < oldMsgs.size(); i++) {
+        data = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
 	        //Java中String类型转换成数据库中的日期类型，添加到数据库
 	        //创建sdf对象，指定日期格式类型
 	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	        //sdf将字符串转化成java.util.Date
 	        java.util.Date parse=null;
-	        String timeString = oldMsgs.get(i).getTime();
+	        String timeString = oldMsgs.get(length - i - 1).getTime();
 	        try {
 		        parse = sdf.parse(timeString);
 	        } catch (ParseException e) {
@@ -137,18 +142,18 @@ public class ChatActivity extends AppCompatActivity {
 	        }
 	        //java.util.Date转换成long
 	        long time = parse.getTime();
-            MsgData msgData = new MsgData(oldMsgs.get(i).getMessage(), time, oldMsgs.get(i).getSendId().equals(cardId) ? profileId : R.drawable.hdimg_1
-                    , oldMsgs.get(i).getSendId().equals(cardId) ? TYPE_RECEIVER_MSG : TYPE_SENDER_MSG);
+            MsgData msgData = new MsgData(oldMsgs.get(length - i - 1).getMessage(), time, oldMsgs.get(length - i - 1).getSendId().equals(cardId) ?  R.drawable.hdimg_6 : R.drawable.hdimg_1
+                    , oldMsgs.get(length - i - 1).getSendId().equals(cardId) ? TYPE_RECEIVER_MSG : TYPE_SENDER_MSG);
             data.add(i, msgData);
         }
 
-        ChatAdapter adapter = new ChatAdapter(this, data);
+        adapter = new ChatAdapter(this, data);
         rv.setAdapter(adapter);
 
         btn_send.setOnClickListener((v) -> {
             //将发送的信息显示到聊天界面，并且清楚发送文本
             String sendMsg = et_msg.getText().toString();
-            MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), R.drawable.hdimg_1, TYPE_SENDER_MSG);
+            MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), R.drawable.hdimg_6, TYPE_SENDER_MSG);
             data.add(data.size(), msgData);
             adapter.notifyDataSetChanged();
             rv.scrollToPosition(data.size() - 1);
@@ -188,6 +193,14 @@ public class ChatActivity extends AppCompatActivity {
             hiddenAnim.setDuration(200);
             return hiddenAnim;
         }
+    }
+
+    public void refresh(String sendMsg) {
+        RecyclerView rv = findViewById(R.id.activity_wechat_chat_rv);
+        MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), profileId, TYPE_RECEIVER_MSG);
+        data.add(data.size(), msgData);
+        adapter.notifyDataSetChanged();
+        rv.scrollToPosition(data.size() - 1);
     }
 
 }
