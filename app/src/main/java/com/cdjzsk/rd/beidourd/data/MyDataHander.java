@@ -226,7 +226,7 @@ public class MyDataHander {
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM message WHERE (sendId = ? AND receiveId = ?) OR (sendId = ? AND receiveId = ?)  ORDER BY time DESC LIMIT 1",
-				new String[]{myCardId,otherCardId,otherCardId,myCardId});
+				new String[]{ myCardId, otherCardId, otherCardId, myCardId});
 		MessageInfo messageInfo = new MessageInfo();
 		if(cursor.moveToFirst()) {
 			messageInfo.setId(cursor.getInt(cursor.getColumnIndex("id")));

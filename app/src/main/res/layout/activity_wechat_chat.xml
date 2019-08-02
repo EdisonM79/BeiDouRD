@@ -74,24 +74,11 @@
         android:layout_height="48dp"
         android:background="@drawable/input_bg"
         android:gravity="center"
-        android:weightSum="8"
+        android:weightSum="6"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
-
-        <ImageView
-            android:id="@+id/activity_wechat_chat_iv_voice"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:paddingBottom="@dimen/margin"
-            android:paddingTop="@dimen/margin"
-            android:src="@drawable/icon_voice"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
 
         <EditText
             android:id="@+id/activity_wechat_chat_et_msg"
@@ -101,19 +88,6 @@
             android:background="@drawable/et_underline_style"
             android:textCursorDrawable="@null"
             tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="0dp" />
-
-        <ImageView
-            android:id="@+id/activity_wechat_chat_iv_emoji"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:paddingBottom="@dimen/margin"
-            android:paddingTop="@dimen/margin"
-            android:src="@drawable/icon_emoji"
-            tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="0dp" />
 
         <FrameLayout

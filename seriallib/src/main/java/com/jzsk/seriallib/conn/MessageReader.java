@@ -304,7 +304,6 @@ class MessageReader {
 						}else{
 							Log.w(TAG, "messageListener == null----------------------");
 						}
-
 						cache.clear();
 						cache.put(cacheBytes);
 						cache.flip();
