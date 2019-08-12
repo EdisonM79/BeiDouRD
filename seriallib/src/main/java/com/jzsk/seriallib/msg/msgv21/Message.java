@@ -36,8 +36,7 @@ public class Message extends BaseMessage {
 
 	public Message(byte[] raw) {
 		if ((raw[0] != PREFIX && raw[0] != PREFIX1) || (raw[raw.length - 2] != SUFFIX && raw[raw.length - 1] != SUFFIX1)){
-			throw new IllegalArgumentException(
-					"Packet prefix or suffix not found.");
+			throw new IllegalArgumentException("Packet prefix or suffix not found.");
 		}
 		if (raw.length < 5) {
 			throw new IllegalArgumentException("Insufficient packet length.");
