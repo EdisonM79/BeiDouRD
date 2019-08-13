@@ -6,19 +6,25 @@ import com.jzsk.seriallib.ClientStateCallback;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.SupportProtcolVersion;
 import com.jzsk.seriallib.conn.MessageListener;
+import com.jzsk.seriallib.msg.msgv21.Message;
 import com.jzsk.seriallib.util.ArrayUtils;
 
 public class SerialPortUtils implements ClientStateCallback {
 
 	//初始化串口对象
-	public static SerialClient mSerialClient = new SerialClient();
+	private static SerialClient mSerialClient = new SerialClient();
 	private static MessageListener ml;
+
+	public static SerialClient getSerialClient() {
+		return mSerialClient;
+	}
 
 	/**
 	 * 创建一个构造函数，在主Activity初始化的时候调用，传一个监听器过来，避免出现没有监听器的现象
 	 * @param ml
 	 */
-	public void SerialPortUtils(@NonNull MessageListener ml) {
+	public SerialPortUtils(@NonNull MessageListener ml) {
+
 		this.ml = ml;
 		//从外部传一个监听器过来
 		mSerialClient.setMessageListener(ml);
@@ -40,7 +46,7 @@ public class SerialPortUtils implements ClientStateCallback {
 	}
 
 	/**
-	 * 将消息发送集成到串口工具类里面
+	 * 发送北斗短报文消息
 	 * @param cardId
 	 * @param message
 	 */
@@ -52,6 +58,18 @@ public class SerialPortUtils implements ClientStateCallback {
 				new byte[]{'$'}, send, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(send)}).getBytes(), new byte[]{0x0D, 0x0A});
 		com.jzsk.seriallib.msg.msgv21.Message msg = new com.jzsk.seriallib.msg.msgv21.Message(sendMsgToSerial);
 		mSerialClient.sendMessage(msg);
+	}
+
+	/**
+	 * 发送串口控制指令
+	 * @param message
+	 */
+	public static void sendControl(String message) {
+
+		byte[] byteMessage = message.getBytes();
+		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, byteMessage, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(byteMessage)}).getBytes(), new byte[]{0x0D, 0x0A});
+		Message msgICA = new Message(sendMsgICA);
+		mSerialClient.sendMessage(msgICA);
 	}
 
 	@Override

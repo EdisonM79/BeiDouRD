@@ -22,8 +22,7 @@ import com.cdjzsk.rd.beidourd.bean.MsgData;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.utils.HelpUtils;
-import com.cdjzsk.rd.beidourd.utils.Packages;
-import com.jzsk.seriallib.util.ArrayUtils;
+import com.cdjzsk.rd.beidourd.utils.SerialPortUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,9 +44,8 @@ public class ChatActivity extends AppCompatActivity {
     public final static int TYPE_TIME_STAMP = 0x23;
 
     private int profileId = R.drawable.hdimg_3;
+    //聊天对方的Id
     private String cardId;
-    private MyDataHander myDataHander;
-    public static ChatActivity instance = null;
     //保存数据库取出的原始数据
     public List<MessageInfo> oldMsgs;
     //保存用于显示的数据
@@ -59,10 +57,10 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wechat_chat);
 
-        instance = this;
         HelpUtils.transparentNav(this);
         Toolbar bar = findViewById(R.id.activity_wechat_chat_toolbar);
         setSupportActionBar(bar);
+        ///////////////////////////
         getSupportActionBar().setTitle("");
         TextView tv = findViewById(R.id.activity_wechat_chat_tv_name);
         String name = getIntent().getStringExtra("name");
@@ -119,13 +117,13 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        myDataHander =  MainActivity.instance.getMyDataHander();
+
         //从数据库中取出20条最新的消息数据
-        oldMsgs = myDataHander.getScrollMessageBySendIdOrReceiveId(cardId,0,20);
+        oldMsgs = MyDataHander.getScrollMessageBySendIdOrReceiveId(cardId,0,20);
         //将这20条数据设置为已读
         int length = oldMsgs.size();
         for(int i = 0; i < length; i++) {
-            myDataHander.updateReadStateByMessageId(MainActivity.MESSAGE_READ, oldMsgs.get(i).getId());
+            MyDataHander.updateReadStateByMessageId(MainActivity.MESSAGE_READ, oldMsgs.get(i).getId());
         }
 
         data = new ArrayList<>();
@@ -166,10 +164,7 @@ public class ChatActivity extends AppCompatActivity {
             et_msg.setText("");
             //将发送的数据打包成为RD的格式
             //通过串口将数据发送到RD模块
-            byte[] send = Packages.CCTXA(cardId, 3, sendMsg);
-            byte[] sendMsgToSerial = ArrayUtils.concatenate(new byte[]{'$'}, send, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(send)}).getBytes(), new byte[]{0x0D, 0x0A});
-            com.jzsk.seriallib.msg.msgv21.Message msg = new com.jzsk.seriallib.msg.msgv21.Message(sendMsgToSerial);
-            MainActivity.instance.mSerialClient.sendMessage(msg);
+            SerialPortUtils.sendMessage(cardId,sendMsg);
 
             //将数据存储到数据库
             MessageInfo messageInfo = new MessageInfo();
@@ -177,10 +172,10 @@ public class ChatActivity extends AppCompatActivity {
             SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String time = sdf.format(new Date());
             messageInfo.setTime(time);
-            messageInfo.setSendId(MainActivity.instance.mCardId);
+            messageInfo.setSendId("");
             messageInfo.setReceiveId(cardId);
             messageInfo.setMessage(sendMsg);
-            myDataHander.addMessage(messageInfo);
+            MyDataHander.addMessage(messageInfo);
         });
     }
 

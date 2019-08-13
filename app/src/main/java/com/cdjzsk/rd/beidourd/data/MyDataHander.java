@@ -31,7 +31,7 @@ public class MyDataHander {
 	 *
 	 * @return
 	 */
-	public static MyDataBaseHelper getInstance() {
+	public static MyDataBaseHelper getDataBaseHelper() {
 		return dbHelper;
 	}
 
@@ -40,7 +40,7 @@ public class MyDataHander {
 	 *
 	 * @return
 	 */
-	public boolean isUserExit(String userId) {
+	public static boolean isUserExit(String userId) {
 		int count = 0;
 
 		SQLiteDatabase db = null;
@@ -72,7 +72,7 @@ public class MyDataHander {
 	 *
 	 * @return
 	 */
-	public boolean isMessageExit() {
+	public static boolean isMessageExit() {
 		int count = 0;
 
 		SQLiteDatabase db = null;
@@ -104,7 +104,7 @@ public class MyDataHander {
 	 *
 	 * @return
 	 */
-	public List<User> getAllUser() {
+	public static List<User> getAllUser() {
 		List<User> users = new ArrayList<User>();
 		SQLiteDatabase db = null;
 		Cursor cursor = null;
@@ -141,7 +141,7 @@ public class MyDataHander {
 	 * @param maxResult
 	 * @return
 	 */
-	public List<MessageInfo> getScrollMessageBySendIdOrReceiveId(String id, int offset, int maxResult) {
+	public static List<MessageInfo> getScrollMessageBySendIdOrReceiveId(String id, int offset, int maxResult) {
 		List<MessageInfo> messages = new ArrayList<MessageInfo>();
 		SQLiteDatabase db = null;
 		Cursor cursor = null;
@@ -179,7 +179,7 @@ public class MyDataHander {
 	 * @param id
 	 * @return
 	 */
-	public User findUserByUserId(String id) {
+	public static User findUserByUserId(String id) {
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM user WHERE id = ?",
 				new String[]{id});
@@ -198,7 +198,7 @@ public class MyDataHander {
 	 * 新增一名联系人
 	 * @param user
 	 */
-	public void addUser(User user) {
+	public static void addUser(User user) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		if(null != user && null != user.getUserId() && null != user.getUserName()) {
 			db.execSQL("INSERT INTO user(id,userName,image) values(?,?,?)",
@@ -210,7 +210,7 @@ public class MyDataHander {
 	 * 新增一条消息
 	 * @param message
 	 */
-	public void addMessage(MessageInfo message) {
+	public static void addMessage(MessageInfo message) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		if(null != message) {
 			db.execSQL("INSERT INTO message(sendId,receiveId,message,time,read) VALUES(?,?,?,?,?)",
@@ -222,7 +222,7 @@ public class MyDataHander {
 	 * 获取与某人的最新信息
 	 * @return
 	 */
-	public MessageInfo getContactShowInfoByCardId(String myCardId, String otherCardId) {
+	public static MessageInfo getContactShowInfoByCardId(String myCardId, String otherCardId) {
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM message WHERE (sendId = ? AND receiveId = ?) OR (sendId = ? AND receiveId = ?)  ORDER BY time DESC LIMIT 1",
@@ -246,7 +246,7 @@ public class MyDataHander {
 	 * @param readState
 	 * @param messageId
 	 */
-	public void updateReadStateByMessageId(String readState, Integer messageId) {
+	public static void updateReadStateByMessageId(String readState, Integer messageId) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put("read",readState);

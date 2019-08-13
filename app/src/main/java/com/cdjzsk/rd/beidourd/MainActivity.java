@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cdjzsk.rd.beidourd.adapter.ContactAdapter;
 import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
@@ -20,13 +19,10 @@ import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.data.entity.User;
 import com.cdjzsk.rd.beidourd.utils.HelpUtils;
-import com.jzsk.seriallib.ClientStateCallback;
+import com.cdjzsk.rd.beidourd.utils.SerialPortUtils;
 import com.jzsk.seriallib.SerialClient;
-import com.jzsk.seriallib.SupportProtcolVersion;
 import com.jzsk.seriallib.conn.MessageListener;
 import com.jzsk.seriallib.msg.BaseMessage;
-import com.jzsk.seriallib.msg.msgv21.Message;
-import com.jzsk.seriallib.util.ArrayUtils;
 import com.jzsk.seriallib.util.LogUtils;
 
 import java.text.SimpleDateFormat;
@@ -38,7 +34,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements ClientStateCallback {
+public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = LogUtils.makeTag(MainActivity.class);
 	@BindView(R.id.cardId)
@@ -89,28 +85,35 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 	ProgressBar progressBar9;
 
 	ListView lv;
+	//本机卡号
 	public String mCardId;
+	//串口操作
 	public SerialClient mSerialClient;
+	//串口工具类
+	public SerialPortUtils serialPortUtils;
+	//数据库
 	private MyDataHander myDataHander;
-	private byte[] ICA = "CCICA,0,00".getBytes();
-	private byte[] BSI = "CCRMO,BSI,2,1".getBytes();
-
+	//读卡指令
+	private String ICA = "CCICA,0,00";
+	//打开波束功率
+	private String BSI = "CCRMO,BSI,2,1";
+	//消息已读标志
 	public static final String MESSAGE_READ = "1";
+	//消息未读标志
 	public static final String MESSAGE_NOTREAD = "0";
+	//高度
 	private int toolbarHeight, statusBarHeight;
 	//联系人展示列表
 	List<ContactShowInfo> infos = new LinkedList<>();
 	//联系人适配器
 	private ContactAdapter adapter;
 	private Handler mHandler = new Handler();
-	public static MainActivity instance = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
-		instance = this;
 		//初始化串口
 		initSerialClient();
 		//初始化数据库
@@ -133,20 +136,17 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		statusBarHeight += 50;
 
 
-		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, ICA, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(ICA)}).getBytes(), new byte[]{0x0D, 0x0A});
-		Message msgICA = new Message(sendMsgICA);
-		mSerialClient.sendMessage(msgICA);
-		//打开波束功率输出
-		byte[] sendMsgBSI = ArrayUtils.concatenate(new byte[]{'$'}, BSI, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(BSI)}).getBytes(), new byte[]{0x0D, 0x0A});
-		Message msgBSI = new Message(sendMsgBSI);
-		mSerialClient.sendMessage(msgBSI);
+		//发送读卡指令
+		SerialPortUtils.sendControl(ICA);
+		//发送打开波束功率输出指令
+		SerialPortUtils.sendControl(BSI);
+
+
 	}
 
 	private void initSerialClient() {
-		//初始化串口对象
-		mSerialClient = new SerialClient();
-		//设置串口消息监听类
-		mSerialClient.setMessageListener(new MessageListener() {
+		//初始化串口工具类，设置串口消息监听类
+		serialPortUtils = new SerialPortUtils(new MessageListener() {
 			@Override
 			public void processMessage(final BaseMessage msg) {
 				runOnUiThread(new Runnable() {
@@ -157,14 +157,7 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 				});
 			}
 		});
-		//模拟串口读取模式
-		mSerialClient.setDebugMode(false);
-		//mSerialClient.setDebugMode(true);
-		mSerialClient.connect(this,SupportProtcolVersion.V21);
-	}
-
-	public MyDataHander getMyDataHander() {
-		return this.myDataHander;
+		mSerialClient = SerialPortUtils.getSerialClient();
 	}
 
 	private void setTxt(final String msg){
@@ -199,10 +192,6 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 					//消息内容
 					String message = msgList[5].substring(0,(index-5));
 					messageInfo.setMessage(message);
-					if(null != ChatActivity.instance)
-					{
-						ChatActivity.instance.refresh(message);
-					}
 					//获取当前系统时间
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 					String time = sdf.format(new Date());
@@ -302,23 +291,6 @@ public class MainActivity extends AppCompatActivity implements ClientStateCallba
 		updateContacts();
 	}
 
-	@Override
-	public void connectSuccess() {
-		setTxt("串口连接成功");
-		Toast.makeText(this, "连接成功", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void connectFail() {
-		setTxt("串口连接失败");
-		Toast.makeText(this, "连接失败", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void connectionClosed() {
-		setTxt("串口连接关闭");
-		Toast.makeText(this, "已关闭连接", Toast.LENGTH_SHORT).show();
-	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	private void initData() {
