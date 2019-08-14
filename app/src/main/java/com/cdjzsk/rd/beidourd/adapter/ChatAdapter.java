@@ -31,6 +31,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MsgViewHolder>
         this.listData = listData;
     }
 
+    public void exchangeListData(List<MsgData> list) {
+        this.listData = list;
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public MsgViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_wechat_msg_list, parent, false);

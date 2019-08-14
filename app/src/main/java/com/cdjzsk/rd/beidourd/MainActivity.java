@@ -8,17 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.cdjzsk.rd.beidourd.adapter.ContactAdapter;
 import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.data.entity.User;
-import com.cdjzsk.rd.beidourd.utils.HelpUtils;
 import com.cdjzsk.rd.beidourd.utils.SerialPortUtils;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.conn.MessageListener;
@@ -31,58 +27,57 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = LogUtils.makeTag(MainActivity.class);
-	@BindView(R.id.cardId)
-	TextView cardId;
-	@BindView(R.id.frequency)
-	TextView frequency;
-	@BindView(R.id.activity_wechat_lv)
-	ListView listView;//ListView组件
-	@BindView(R.id.bs_tv_0)
-	TextView bsiTv_0;
-	@BindView(R.id.bs_tv_1)
-	TextView bsiTv_1;
-	@BindView(R.id.bs_tv_2)
-	TextView bsiTv_2;
-	@BindView(R.id.bs_tv_3)
-	TextView bsiTv_3;
-	@BindView(R.id.bs_tv_4)
-	TextView bsiTv_4;
-	@BindView(R.id.bs_tv_5)
-	TextView bsiTv_5;
-	@BindView(R.id.bs_tv_6)
-	TextView bsiTv_6;
-	@BindView(R.id.bs_tv_7)
-	TextView bsiTv_7;
-	@BindView(R.id.bs_tv_8)
-	TextView bsiTv_8;
-	@BindView(R.id.bs_tv_9)
-	TextView bsiTv_9;
-	@BindView(R.id.vertical_progressbar0)
-	ProgressBar progressBar0;
-	@BindView(R.id.vertical_progressbar1)
-	ProgressBar progressBar1;
-	@BindView(R.id.vertical_progressbar2)
-	ProgressBar progressBar2;
-	@BindView(R.id.vertical_progressbar3)
-	ProgressBar progressBar3;
-	@BindView(R.id.vertical_progressbar4)
-	ProgressBar progressBar4;
-	@BindView(R.id.vertical_progressbar5)
-	ProgressBar progressBar5;
-	@BindView(R.id.vertical_progressbar6)
-	ProgressBar progressBar6;
-	@BindView(R.id.vertical_progressbar7)
-	ProgressBar progressBar7;
-	@BindView(R.id.vertical_progressbar8)
-	ProgressBar progressBar8;
-	@BindView(R.id.vertical_progressbar9)
-	ProgressBar progressBar9;
+//	@BindView(R.id.cardId)
+//	TextView cardId;
+//	@BindView(R.id.frequency)
+//	TextView frequency;
+//	@BindView(R.id.activity_wechat_lv)
+//	ListView listView;//ListView组件
+//	@BindView(R.id.bs_tv_0)
+//	TextView bsiTv_0;
+//	@BindView(R.id.bs_tv_1)
+//	TextView bsiTv_1;
+//	@BindView(R.id.bs_tv_2)
+//	TextView bsiTv_2;
+//	@BindView(R.id.bs_tv_3)
+//	TextView bsiTv_3;
+//	@BindView(R.id.bs_tv_4)
+//	TextView bsiTv_4;
+//	@BindView(R.id.bs_tv_5)
+//	TextView bsiTv_5;
+//	@BindView(R.id.bs_tv_6)
+//	TextView bsiTv_6;
+//	@BindView(R.id.bs_tv_7)
+//	TextView bsiTv_7;
+//	@BindView(R.id.bs_tv_8)
+//	TextView bsiTv_8;
+//	@BindView(R.id.bs_tv_9)
+//	TextView bsiTv_9;
+//	@BindView(R.id.vertical_progressbar0)
+//	ProgressBar progressBar0;
+//	@BindView(R.id.vertical_progressbar1)
+//	ProgressBar progressBar1;
+//	@BindView(R.id.vertical_progressbar2)
+//	ProgressBar progressBar2;
+//	@BindView(R.id.vertical_progressbar3)
+//	ProgressBar progressBar3;
+//	@BindView(R.id.vertical_progressbar4)
+//	ProgressBar progressBar4;
+//	@BindView(R.id.vertical_progressbar5)
+//	ProgressBar progressBar5;
+//	@BindView(R.id.vertical_progressbar6)
+//	ProgressBar progressBar6;
+//	@BindView(R.id.vertical_progressbar7)
+//	ProgressBar progressBar7;
+//	@BindView(R.id.vertical_progressbar8)
+//	ProgressBar progressBar8;
+//	@BindView(R.id.vertical_progressbar9)
+//	ProgressBar progressBar9;
 
 	ListView lv;
 	//本机卡号
@@ -114,32 +109,32 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
-		//初始化串口
-		initSerialClient();
+//		//初始化串口
+//		initSerialClient();
 		//初始化数据库
-		myDataHander = new MyDataHander(this);
-		//初始化模拟数据
-		initData();
-
-
-		statusBarHeight = HelpUtils.getStatusBarHeight(MainActivity.this);
-
-		View view = getLayoutInflater().inflate(R.layout.activity_main, null);
-		LinearLayout linearlayout1 = (LinearLayout)view.findViewById(R.id.toolLayout);
-		LinearLayout linearlayout2 = (LinearLayout)view.findViewById(R.id.Bsi_Box);
-		//measure方法的参数值都设为0即可
-		linearlayout1.measure(0,0);
-		linearlayout2.measure(0,0);
-		toolbarHeight = linearlayout1.getMeasuredHeight();
-		//获取组件高度
-		statusBarHeight += linearlayout2.getMeasuredHeight();
-		statusBarHeight += 50;
-
-
-		//发送读卡指令
-		SerialPortUtils.sendControl(ICA);
-		//发送打开波束功率输出指令
-		SerialPortUtils.sendControl(BSI);
+//		myDataHander = new MyDataHander(this);
+//		//初始化模拟数据
+//		initData();
+//
+//
+//		statusBarHeight = HelpUtils.getStatusBarHeight(MainActivity.this);
+//
+//		View view = getLayoutInflater().inflate(R.layout.activity_main, null);
+//		LinearLayout linearlayout1 = (LinearLayout)view.findViewById(R.id.toolLayout);
+//		LinearLayout linearlayout2 = (LinearLayout)view.findViewById(R.id.Bsi_Box);
+//		//measure方法的参数值都设为0即可
+//		linearlayout1.measure(0,0);
+//		linearlayout2.measure(0,0);
+//		toolbarHeight = linearlayout1.getMeasuredHeight();
+//		//获取组件高度
+//		statusBarHeight += linearlayout2.getMeasuredHeight();
+//		statusBarHeight += 50;
+//
+//
+//		//发送读卡指令
+//		SerialPortUtils.sendControl(ICA);
+//		//发送打开波束功率输出指令
+//		SerialPortUtils.sendControl(BSI);
 
 
 	}
@@ -169,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
 					String[] msgList = msg.split(",");
 					String carId = msgList[1];
 					String freqy = msgList[5];
-					cardId.setText(carId);
+					//cardId.setText(carId);
 					mCardId = carId;
-					frequency.setText(freqy);
+					//frequency.setText(freqy);
 				}
 				if(msg.contains("BDFKI"))
 				{
@@ -244,29 +239,28 @@ public class MainActivity extends AppCompatActivity {
 				if(msg.contains("BDBSI"))
 				{
 					String[] bsiList = msg.split(",");
-					bsiTv_0.setText(bsiList[3]);
-					progressBar0.setProgress(Integer.parseInt(bsiList[3]));
-					bsiTv_1.setText(bsiList[4]);
-					progressBar1.setProgress(Integer.parseInt(bsiList[4]));
-					bsiTv_2.setText(bsiList[5]);
-					progressBar2.setProgress(Integer.parseInt(bsiList[5]));
-					bsiTv_3.setText(bsiList[6]);
-					progressBar3.setProgress(Integer.parseInt(bsiList[6]));
-					bsiTv_4.setText(bsiList[7]);
-					progressBar4.setProgress(Integer.parseInt(bsiList[7]));
-					bsiTv_5.setText(bsiList[8]);
-					progressBar5.setProgress(Integer.parseInt(bsiList[8]));
-					bsiTv_6.setText(bsiList[9]);
-					progressBar6.setProgress(Integer.parseInt(bsiList[9]));
-					bsiTv_7.setText(bsiList[10]);
-					progressBar7.setProgress(Integer.parseInt(bsiList[10]));
-					bsiTv_8.setText(bsiList[11]);
-					progressBar8.setProgress(Integer.parseInt(bsiList[11]));
-					//最后一位包含波束功率，"*"和校验和
-					String last = bsiList[12].substring(0,1);
-					bsiTv_9.setText(last);
-					progressBar9.setProgress(Integer.parseInt(last));
-
+//					bsiTv_0.setText(bsiList[3]);
+//					progressBar0.setProgress(Integer.parseInt(bsiList[3]));
+//					bsiTv_1.setText(bsiList[4]);
+//					progressBar1.setProgress(Integer.parseInt(bsiList[4]));
+//					bsiTv_2.setText(bsiList[5]);
+//					progressBar2.setProgress(Integer.parseInt(bsiList[5]));
+//					bsiTv_3.setText(bsiList[6]);
+//					progressBar3.setProgress(Integer.parseInt(bsiList[6]));
+//					bsiTv_4.setText(bsiList[7]);
+//					progressBar4.setProgress(Integer.parseInt(bsiList[7]));
+//					bsiTv_5.setText(bsiList[8]);
+//					progressBar5.setProgress(Integer.parseInt(bsiList[8]));
+//					bsiTv_6.setText(bsiList[9]);
+//					progressBar6.setProgress(Integer.parseInt(bsiList[9]));
+//					bsiTv_7.setText(bsiList[10]);
+//					progressBar7.setProgress(Integer.parseInt(bsiList[10]));
+//					bsiTv_8.setText(bsiList[11]);
+//					progressBar8.setProgress(Integer.parseInt(bsiList[11]));
+//					//最后一位包含波束功率，"*"和校验和
+//					String last = bsiList[12].substring(0,1);
+//					bsiTv_9.setText(last);
+//					progressBar9.setProgress(Integer.parseInt(last));
 				}
 			}
 		});
@@ -288,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateContacts();
+//		updateContacts();
 	}
 
 
@@ -297,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
 		/**************/
 		mCardId = "0412159";
 
-		lv = findViewById(R.id.activity_wechat_lv);
+		//lv = findViewById(R.id.activity_wechat_lv);
 		List<User> contacts = myDataHander.getAllUser();
 		//初始化数据
 		for (int i = 0; i < contacts.size(); i++) {
