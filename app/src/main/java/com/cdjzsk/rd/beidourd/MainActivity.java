@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.cdjzsk.rd.beidourd.adapter.ContactAdapter;
 import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
@@ -27,21 +29,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = LogUtils.makeTag(MainActivity.class);
-//	@BindView(R.id.cardId)
-//	TextView cardId;
-//	@BindView(R.id.frequency)
-//	TextView frequency;
-//	@BindView(R.id.activity_wechat_lv)
-//	ListView listView;//ListView组件
-//	@BindView(R.id.bs_tv_0)
-//	TextView bsiTv_0;
-//	@BindView(R.id.bs_tv_1)
-//	TextView bsiTv_1;
+	@BindView(R.id.card_id)
+	TextView cardId;
+	@BindView(R.id.frequency)
+	TextView frequency;
+	@BindView(R.id.readButton)
+	Button readButton;
+	@BindView(R.id.messageButton)
+	Button messageButton;
+	@BindView(R.id.sosButton)
+	Button sosButton;
 //	@BindView(R.id.bs_tv_2)
 //	TextView bsiTv_2;
 //	@BindView(R.id.bs_tv_3)
@@ -109,36 +112,37 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
-//		//初始化串口
-//		initSerialClient();
+		//初始化串口
+		initSerialClient();
 		//初始化数据库
-//		myDataHander = new MyDataHander(this);
-//		//初始化模拟数据
-//		initData();
-//
-//
-//		statusBarHeight = HelpUtils.getStatusBarHeight(MainActivity.this);
-//
-//		View view = getLayoutInflater().inflate(R.layout.activity_main, null);
-//		LinearLayout linearlayout1 = (LinearLayout)view.findViewById(R.id.toolLayout);
-//		LinearLayout linearlayout2 = (LinearLayout)view.findViewById(R.id.Bsi_Box);
-//		//measure方法的参数值都设为0即可
-//		linearlayout1.measure(0,0);
-//		linearlayout2.measure(0,0);
-//		toolbarHeight = linearlayout1.getMeasuredHeight();
-//		//获取组件高度
-//		statusBarHeight += linearlayout2.getMeasuredHeight();
-//		statusBarHeight += 50;
-//
-//
-//		//发送读卡指令
-//		SerialPortUtils.sendControl(ICA);
-//		//发送打开波束功率输出指令
-//		SerialPortUtils.sendControl(BSI);
+		myDataHander = new MyDataHander(this);
+		//点击读卡按钮，发送读卡指令，打开波束功率输出
+		readButton.setOnClickListener((View view)-> {
+				//发送读卡指令
+				SerialPortUtils.sendControl(ICA);
+				//发送打开波束功率输出指令
+				SerialPortUtils.sendControl(BSI);
+		});
+		//点击短报文按钮跳转到聊天界面
+		messageButton.setOnClickListener((View view)-> {
 
+				Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+				startActivity(intent);
 
+		});
+		//点击SOS按钮，暂时不做处理
+		sosButton.setOnClickListener((View view)->{
+			System.out.println("this is lambda");
+		});
+		//发送读卡指令
+		SerialPortUtils.sendControl(ICA);
+		//发送打开波束功率输出指令
+		SerialPortUtils.sendControl(BSI);
 	}
 
+	/**
+	 * 初始化串口工具，设置串口监听类
+	 */
 	private void initSerialClient() {
 		//初始化串口工具类，设置串口消息监听类
 		serialPortUtils = new SerialPortUtils(new MessageListener() {
@@ -147,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						setTxt(msg.toString());
+						updataUI(msg.toString());
 					}
 				});
 			}
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 		mSerialClient = SerialPortUtils.getSerialClient();
 	}
 
-	private void setTxt(final String msg){
+	private void updataUI(final String msg){
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -164,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
 					String[] msgList = msg.split(",");
 					String carId = msgList[1];
 					String freqy = msgList[5];
-					//cardId.setText(carId);
+					cardId.setText(carId);
 					mCardId = carId;
-					//frequency.setText(freqy);
+					frequency.setText(freqy);
 				}
 				if(msg.contains("BDFKI"))
 				{
@@ -212,8 +216,6 @@ public class MainActivity extends AppCompatActivity {
 						//将新消息添加到队列
 						infos.add(new ContactShowInfo(userId,R.drawable.hdimg_1,userId,message,time,false));
 						if (infos.size() > 1) {
-							//置顶消息
-							stickyTop(adapter,infos,infos.size()-1);
 						} else {
 							adapter.notifyDataSetChanged();
 						}
@@ -229,8 +231,6 @@ public class MainActivity extends AppCompatActivity {
 								infos.get(i).setLastMsgTime(time);
 								//设置消息为未读
 								infos.get(i).setRead(false);
-								//将消息置顶
-								stickyTop(adapter,infos,i);
 							}
 						}
 					}
@@ -264,8 +264,11 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		});
-
 	}
+
+	/**
+	 * 关闭串口
+	 */
 	private void closeSerialClient(){
 		if(mSerialClient != null) {
 			mSerialClient.close();
@@ -276,170 +279,10 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		//关闭串口
 		closeSerialClient();
+		//关闭数据库连接
 		myDataHander = null;
 	}
-	@Override
-	protected void onResume() {
-		super.onResume();
-//		updateContacts();
-	}
-
-
-	@SuppressLint("ClickableViewAccessibility")
-	private void initData() {
-		/**************/
-		mCardId = "0412159";
-
-		//lv = findViewById(R.id.activity_wechat_lv);
-		List<User> contacts = myDataHander.getAllUser();
-		//初始化数据
-		for (int i = 0; i < contacts.size(); i++) {
-			String others = contacts.get(i).getUserId();
-			int image = contacts.get(i).getImage();
-			String name = contacts.get(i).getUserName();
-			MessageInfo messageInfo = myDataHander.getContactShowInfoByCardId(mCardId,others);
-			//判断是否已读
-			boolean read;
-			if(messageInfo.getRead().equals("1")) {
-				read = true;
-			} else {
-				read = false;
-			}
-			infos.add(i, new ContactShowInfo(others, image, name, messageInfo.getMessage(), messageInfo.getTime(),read));
-		}
-		//初始化适配器
-		adapter = new ContactAdapter(this, R.layout.item_wechat_main, infos);
-		//设置适配器
-		lv.setAdapter(adapter);
-
-		//触摸监听器
-		lv.setOnTouchListener(new View.OnTouchListener() {
-			int preX, preY;
-			//滑过&长按
-			boolean isSlip = false, isLongClick = false;
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN:
-						//长按时间暂不响应
-						preX = (int) event.getX();
-						preY = (int) event.getY();
-						mHandler.postDelayed(() -> {
-							isLongClick = true;
-							int x = (int) event.getX();
-							int y = (int) event.getY();
-							//延时500ms后，其Y的坐标加入了Toolbar和statusBar高度
-							int position = lv.pointToPosition(x, y - toolbarHeight - statusBarHeight);
-							//initPopupMenu(v, x, y, adapter, position, infos);
-
-						}, 500);
-						break;
-
-					case MotionEvent.ACTION_MOVE:
-						int nowX = (int) event.getX();
-						int nowY = (int) event.getY();
-
-						int movedX = Math.abs(nowX - preX);
-						int movedY = Math.abs(nowY - preY);
-						if (movedX > 50 || movedY > 50) {
-							isSlip = true;
-							mHandler.removeCallbacksAndMessages(null);
-							//处理滑动事件
-						}
-						break;
-
-
-					case MotionEvent.ACTION_UP:
-						mHandler.removeCallbacksAndMessages(null);
-						if (!isSlip && !isLongClick) {
-							//处理单击事件
-							int position = lv.pointToPosition(preX, preY);
-
-							Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-							String name = infos.get(position).getUsername();
-							int image = infos.get(position).getHeadImage();
-							String id = infos.get(position).getCardId();
-							intent.putExtra("name", name);
-							intent.putExtra("profileId", image);
-							intent.putExtra("id", id);
-							startActivity(intent);
-						} else {
-							isSlip = false;
-							isLongClick = false;
-						}
-						v.performClick();
-						break;
-				}
-
-				return false;
-			}
-		});
-	}
-
-	private void updateContacts() {
-
-		List<User> contacts = myDataHander.getAllUser();
-		infos.clear();
-		//初始化数据
-		for (int i = 0; i < contacts.size(); i++) {
-			String others = contacts.get(i).getUserId();
-			int image = contacts.get(i).getImage();
-			String name = contacts.get(i).getUserName();
-			MessageInfo messageInfo = myDataHander.getContactShowInfoByCardId(mCardId,others);
-			//判断是否已读
-			boolean read;
-			if(messageInfo.getRead().equals("1")) {
-				read = true;
-			} else {
-				read = false;
-			}
-			infos.add(i, new ContactShowInfo(others, image, name, messageInfo.getMessage(), messageInfo.getTime(),read));
-		}
-		adapter.notifyDataSetChanged();
-	}
-	/**
-	 * 设置已读还是未读
-	 *
-	 * @param isRead   true已读，false未读
-	 * @param position item position
-	 * @param adapter  数据源
-	 * @param datas
-	 */
-	private void setIsRead(boolean isRead, int position, ContactAdapter adapter, List<ContactShowInfo> datas) {
-		ContactShowInfo info = datas.get(position);
-		info.setRead(isRead);
-		adapter.notifyDataSetChanged();
-	}
-
-	/**
-	 * 删除指定位置item
-	 *
-	 * @param position 指定删除position
-	 * @param adapter  数据源
-	 * @param datas
-	 */
-	private void deleteMsg(int position, ContactAdapter adapter, List<ContactShowInfo> datas) {
-		datas.remove(position);
-		adapter.notifyDataSetChanged();
-	}
-	/**
-	 * 置顶item
-	 *
-	 * @param adapter
-	 * @param datas
-	 */
-	private void stickyTop(ContactAdapter adapter, List<ContactShowInfo> datas, int position) {
-		if (position >= 0) {
-			ContactShowInfo stickyTopItem = datas.get(position);
-			datas.remove(position);
-			datas.add(0, stickyTopItem);
-		} else {
-			return;
-		}
-		adapter.notifyDataSetChanged();
-	}
-
 
 }

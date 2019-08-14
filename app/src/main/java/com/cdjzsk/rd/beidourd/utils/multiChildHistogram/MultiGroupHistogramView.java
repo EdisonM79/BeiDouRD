@@ -340,41 +340,4 @@ public class MultiGroupHistogramView extends View {
 	private LinearGradient getHistogramShader(float x0, float y0, float x1, float y1, int[] colors) {
 		return new LinearGradient(x0, y0, x1, y1, colors, null, Shader.TileMode.CLAMP);
 	}
-
-
-//    private static final float INFLEXION = 0.35f;
-//    private static float mFlingFriction = ViewConfiguration.getScrollFriction();
-//    private static float mPhysicalCoeff = SensorManager.GRAVITY_EARTH * 39.37f * DisplayUtil.getScaleFactor() * 160 * 0.84f;
-//    ;
-//    private static float DECELERATION_RATE = (float) (Math.log(0.78) / Math.log(0.9));
-//
-//    private double getSplineDeceleration(int velocity) {
-//        return Math.log(INFLEXION * Math.abs(velocity) / (mFlingFriction * mPhysicalCoeff));
-//    }
-//
-//    private double getSplineDecelerationByDistance(double distance) {
-//        final double decelMinusOne = DECELERATION_RATE - 1.0;
-//        return decelMinusOne * (Math.log(distance / (mFlingFriction * mPhysicalCoeff))) / DECELERATION_RATE;
-//    }
-//
-//    //通过初始速度获取最终滑动距离
-//    private double getSplineFlingDistance(int velocity) {
-//        final double l = getSplineDeceleration(velocity);
-//        final double decelMinusOne = DECELERATION_RATE - 1.0;
-//        return mFlingFriction * mPhysicalCoeff * Math.exp(DECELERATION_RATE / decelMinusOne * l);
-//    }
-//
-//    //通过需要滑动的距离获取初始速度
-//    private int getVelocityByDistance(double distance) {
-//        final double l = getSplineDecelerationByDistance(distance);
-//        int velocity = (int) (Math.exp(l) * mFlingFriction * mPhysicalCoeff / INFLEXION);
-//        return Math.abs(velocity);
-//    }
-//
-//    //获取滑动的时间
-//    private int getSplineFlingDuration(int velocity) {
-//        final double l = getSplineDeceleration(velocity);
-//        final double decelMinusOne = DECELERATION_RATE - 1.0;
-//        return (int) (1000.0 * Math.exp(l / decelMinusOne));
-//    }
 }
