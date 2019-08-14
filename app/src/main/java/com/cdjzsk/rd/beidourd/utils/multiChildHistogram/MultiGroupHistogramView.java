@@ -33,7 +33,8 @@ import java.util.List;
 public class MultiGroupHistogramView extends View {
 	private int width;
 	private int height;
-	// 坐标轴线宽度
+
+	/**坐标轴线的宽度*/
 	private int coordinateAxisWidth;
 
 	// 组名称字体大小
@@ -80,20 +81,36 @@ public class MultiGroupHistogramView extends View {
 	private int maximumVelocity;
 	private VelocityTracker velocityTracker;
 
+	/**
+	 * 在代码里面初始化的时候调用
+	 * @param context
+	 */
 	public MultiGroupHistogramView(Context context) {
 		this(context, null);
 	}
 
+	/**
+	 * 在XML文件布局的时候调用
+	 * @param context
+	 * @param attrs
+	 */
 	public MultiGroupHistogramView(Context context, @Nullable AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
+	/**
+	 * 不会自动调用，如果有默认style时，在第二个构造函数中调用
+	 * @param context
+	 * @param attrs
+	 * @param defStyleAttr
+	 */
 	public MultiGroupHistogramView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		init(attrs);
 	}
 
 	private void init(AttributeSet attrs) {
+		//开启硬件加速
 		setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MultiGroupHistogramView);
 		coordinateAxisWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_coordinateAxisWidth, DisplayUtil.dp2px(2));
@@ -241,6 +258,10 @@ public class MultiGroupHistogramView extends View {
 		}
 	}
 
+	/**
+	 * 重新设置柱状图的数据值
+	 * @param dataList
+	 */
 	public void setDataList(@NonNull List<MultiGroupHistogramGroupData> dataList) {
 		this.dataList = dataList;
 		if (childMaxValueArray == null) {
