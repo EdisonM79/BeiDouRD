@@ -1,11 +1,13 @@
 package com.cdjzsk.rd.beidourd;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
+import android.util.Log;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,16 +20,21 @@ import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.data.entity.User;
 import com.cdjzsk.rd.beidourd.utils.SerialPortUtils;
+import com.cdjzsk.rd.beidourd.utils.multiChildHistogram.MultiGroupHistogramChildData;
+import com.cdjzsk.rd.beidourd.utils.multiChildHistogram.MultiGroupHistogramGroupData;
+import com.cdjzsk.rd.beidourd.utils.multiChildHistogram.MultiGroupHistogramView;
 import com.jzsk.seriallib.SerialClient;
 import com.jzsk.seriallib.conn.MessageListener;
 import com.jzsk.seriallib.msg.BaseMessage;
 import com.jzsk.seriallib.util.LogUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 //	@BindView(R.id.vertical_progressbar9)
 //	ProgressBar progressBar9;
 
+	private OrientationEventListener orientationEventListener;
+	private MultiGroupHistogramView multiGroupHistogramView;
 	ListView lv;
 	//本机卡号
 	public String mCardId;
@@ -106,11 +115,16 @@ public class MainActivity extends AppCompatActivity {
 	//联系人适配器
 	private ContactAdapter adapter;
 	private Handler mHandler = new Handler();
+
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
+		//window.setStatusBarColor(getResources().getColor(R.color.colorWhite));
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//HelpUtils.transparentNav(this);
 		ButterKnife.bind(this);
 		//初始化串口
 		initSerialClient();
@@ -125,20 +139,76 @@ public class MainActivity extends AppCompatActivity {
 		});
 		//点击短报文按钮跳转到聊天界面
 		messageButton.setOnClickListener((View view)-> {
-
-				Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-				startActivity(intent);
+			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			intent.putExtra("id", mCardId);
+			intent.putExtra("name", "四川小花");
+			startActivity(intent);
 
 		});
 		//点击SOS按钮，暂时不做处理
 		sosButton.setOnClickListener((View view)->{
+			Log.d("SOS","Click SOS Button");
 			System.out.println("this is lambda");
 		});
-		//发送读卡指令
-		SerialPortUtils.sendControl(ICA);
-		//发送打开波束功率输出指令
-		SerialPortUtils.sendControl(BSI);
+
+		init();
 	}
+	private void init() {
+		multiGroupHistogramView = findViewById(R.id.multiGroupHistogramView);
+		initMultiGroupHistogramView();
+		initOrientationListener();
+	}
+
+	private void initMultiGroupHistogramView() {
+		Random random = new Random();
+		int groupSize = 10;
+		List<MultiGroupHistogramGroupData> groupDataList = new ArrayList<>();
+		for (int i = 0; i < groupSize; i++) {
+			List<MultiGroupHistogramChildData> childDataList = new ArrayList<>();
+			MultiGroupHistogramGroupData groupData = new MultiGroupHistogramGroupData();
+			groupData.setGroupName(String.valueOf(i + 1));
+			MultiGroupHistogramChildData childData1 = new MultiGroupHistogramChildData();
+			childData1.setSuffix("");
+			childData1.setValue(random.nextInt(5));
+			childDataList.add(childData1);
+			groupData.setChildDataList(childDataList);
+			groupDataList.add(groupData);
+		}
+		multiGroupHistogramView.setDataList(groupDataList);
+		//int[] color1 = new int[]{Color.parseColor("#00FF00"), Color.parseColor("#FF0000")};
+		//int[] color1 = new int[]{Color.parseColor("#FFD100"), Color.parseColor("#FF3300")};
+		int[] color1 = new int[]{Color.parseColor("#008000"), Color.parseColor("#32CD32")};
+		multiGroupHistogramView.setHistogramColor(color1);
+	}
+
+	private void initOrientationListener() {
+		orientationEventListener = new OrientationEventListener(this) {
+			@Override
+			public void onOrientationChanged(int orientation) {
+				int screenOrientation = getResources().getConfiguration().orientation;
+				if (orientation > 315 || orientation < 45 && orientation > 0) {
+					if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					}
+				} else if (orientation > 45 && orientation < 135) {
+					if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+					}
+				} else if (orientation > 135 && orientation < 225) {
+//                    if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+//                        LogUtil.e("kkkkkkkk: " + orientation);
+//                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+//                    }
+				} else if (orientation > 225 && orientation < 315) {
+					if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+					}
+				}
+			}
+		};
+	}
+
+
 
 	/**
 	 * 初始化串口工具，设置串口监听类
@@ -166,10 +236,9 @@ public class MainActivity extends AppCompatActivity {
 				if(msg.contains("BDICI"))
 				{
 					String[] msgList = msg.split(",");
-					String carId = msgList[1];
+					mCardId= msgList[1];
 					String freqy = msgList[5];
-					cardId.setText(carId);
-					mCardId = carId;
+					cardId.setText(mCardId);
 					frequency.setText(freqy);
 				}
 				if(msg.contains("BDFKI"))
@@ -277,6 +346,15 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+		//发送读卡指令
+		SerialPortUtils.sendControl(ICA);
+		//发送打开波束功率输出指令
+		SerialPortUtils.sendControl(BSI);
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		//关闭串口
@@ -285,4 +363,19 @@ public class MainActivity extends AppCompatActivity {
 		myDataHander = null;
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (orientationEventListener != null) {
+			orientationEventListener.enable();
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (orientationEventListener != null) {
+			orientationEventListener.disable();
+		}
+	}
 }

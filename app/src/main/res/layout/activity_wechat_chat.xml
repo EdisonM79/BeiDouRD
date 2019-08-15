@@ -9,7 +9,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_wechat_chat_toolbar"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="50dp"
         android:background="@color/colorLightDark"
         android:fitsSystemWindows="true"
         app:contentInsetStart="0dp"
@@ -52,7 +52,8 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:padding="@dimen/item_margin_left"
-            android:src="@drawable/profile_info" />
+            android:src="@drawable/profile_info"
+            tools:layout_editor_absoluteX="538dp" />
 
 
     </android.support.v7.widget.Toolbar>

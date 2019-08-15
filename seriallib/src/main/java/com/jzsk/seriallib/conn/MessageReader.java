@@ -151,14 +151,6 @@ class MessageReader {
 			byte[] buf = new byte[1024];
 			int len;
 			while (!mDone && (len = mInput.read(buf)) != -1) {
-				//打印收到的消息
-				byte[] ss1 = new byte[len];
-				for (int i = 0;i < len ;i++ )
-				{
-					ss1[i] = buf[i];
-				}
-				String s1 = new String(ss1);
-				Log.d("收到信息11111：",s1);
 				if (len > 0) {
 					//Log.d(TAG,ArrayUtils.bytesToHexString(buf));
 					try {
@@ -171,14 +163,6 @@ class MessageReader {
 						cache.put(data);
 						switch (mProtcolVersion){ //暂时直接用方法区分
 							case 21:
-								//打印收到的消息
-								byte[] ss2 = new byte[len];
-								for (int i = 0;i < len ;i++ )
-								{
-									ss2[i] = buf[i];
-								}
-								String s2 = new String(ss2);
-								Log.d("收到信息2222：",s2);
 								readDataV21();
 								break;
 							case 40:
@@ -296,6 +280,7 @@ class MessageReader {
 						/** 把剩下的数据存放到cacheBytes数组里面 */
 						byte[] cacheBytes = new byte[cache.limit() - cache.position()];
 						cache.get(cacheBytes);
+						Log.w(TAG, String.format("serial read=[%s]",new String(raw)));
 						Log.w(TAG, String.format("serial read=[%s]",ArrayUtils.bytesToHexString(raw)));
 						com.jzsk.seriallib.msg.msgv21.Message msg = new com.jzsk.seriallib.msg.msgv21.Message(raw);
 						processMessage(msg);

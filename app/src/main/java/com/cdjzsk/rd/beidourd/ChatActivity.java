@@ -75,9 +75,7 @@ public class ChatActivity extends AppCompatActivity {
     private void initComponents() {
         ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
         TextView tv_user = findViewById(R.id.activity_wechat_chat_tv_name);
-        //ImageView iv_voice = findViewById(R.id.activity_wechat_chat_iv_voice);
         EditText et_msg = findViewById(R.id.activity_wechat_chat_et_msg);
-        //ImageView iv_emoji = findViewById(R.id.activity_wechat_chat_iv_emoji);
         ImageView iv_add = findViewById(R.id.activity_wechat_chat_iv_add);
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
         RecyclerView rv = findViewById(R.id.activity_wechat_chat_rv);

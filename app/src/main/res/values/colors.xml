@@ -2,7 +2,7 @@
 <resources>
     <color name="colorRead">#e6a186</color>
     <color name="colorPrimary">#dae3f3</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#3e3e3d</color>
     <color name="colorLightGrey">#ececec</color>
     <color name="colorLightTransparentGrey">#0fececec</color>
     <color name="colorTransparent">#00ffffff</color>

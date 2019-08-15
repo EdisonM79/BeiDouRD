@@ -12,7 +12,7 @@ import com.jzsk.seriallib.util.ArrayUtils;
 public class SerialPortUtils implements ClientStateCallback {
 
 	//初始化串口对象
-	private static SerialClient mSerialClient = new SerialClient();
+	private static SerialClient mSerialClient;
 	private static MessageListener ml;
 
 	public static SerialClient getSerialClient() {
@@ -26,6 +26,7 @@ public class SerialPortUtils implements ClientStateCallback {
 	public SerialPortUtils(@NonNull MessageListener ml) {
 
 		this.ml = ml;
+		mSerialClient = new SerialClient();
 		//从外部传一个监听器过来
 		mSerialClient.setMessageListener(ml);
 		//模拟串口读取模式

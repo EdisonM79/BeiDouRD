@@ -311,7 +311,7 @@ public class MultiGroupHistogramView extends View {
 		}
 		int scrollX = getScrollX();
 		int axisBottom = height - groupNameTextSize - distanceFormGroupNameToAxis - coordinateAxisWidth / 2;
-		canvas.drawLine(coordinateAxisWidth / 2 + scrollX, 0, coordinateAxisWidth / 2 + scrollX, axisBottom, coordinateAxisPaint);
+		//canvas.drawLine(coordinateAxisWidth / 2 + scrollX, 0, coordinateAxisWidth / 2 + scrollX, axisBottom, coordinateAxisPaint);
 		canvas.drawLine(scrollX, axisBottom, width + scrollX, axisBottom, coordinateAxisPaint);
 		if (dataList != null && dataList.size() > 0) {
 			int xAxisOffset = histogramPaddingStart;
