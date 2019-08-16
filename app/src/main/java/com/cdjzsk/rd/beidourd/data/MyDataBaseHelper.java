@@ -21,7 +21,8 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
 			"receiveId VARCHAR(20)," +
 			"message VARCHAR(400)," +
 			"time TEXT,"+
-			"read CHAR(2))";
+			"read CHAR(2),"+
+			"mySend CHAR(2))";
 
 	public MyDataBaseHelper(Context context, String name,SQLiteDatabase.CursorFactory factory, int version){
 		super(context, name, factory, version);

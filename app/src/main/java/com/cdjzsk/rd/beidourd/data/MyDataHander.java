@@ -156,12 +156,13 @@ public class MyDataHander {
 				String message = cursor.getString(cursor.getColumnIndex("message"));
 				String time = cursor.getString(cursor.getColumnIndex("time"));
 				String read = cursor.getString(cursor.getColumnIndex("read"));
-				messages.add(new MessageInfo(messageId, sendId, receiveId, message, time, read));
+				String mySend = cursor.getString(cursor.getColumnIndex("mySend"));
+				messages.add(new MessageInfo(messageId, sendId, receiveId, message, time, read, mySend));
 			}
 			cursor.close();
 			return messages;
 		} catch (Exception e) {
-			Log.e("db", "", e);
+			Log.e("db", "Get Scroll Message By SendId Or ReceiveId Error", e);
 		} finally {
 			if (cursor != null) {
 				cursor.close();
@@ -213,8 +214,8 @@ public class MyDataHander {
 	public static void addMessage(MessageInfo message) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		if(null != message) {
-			db.execSQL("INSERT INTO message(sendId,receiveId,message,time,read) VALUES(?,?,?,?,?)",
-					new Object[]{message.getSendId(),message.getReceiveId(),message.getMessage(),message.getTime(),message.getRead()});
+			db.execSQL("INSERT INTO message(sendId,receiveId,message,time,read,mySend) VALUES(?,?,?,?,?,?)",
+					new Object[]{message.getSendId(),message.getReceiveId(),message.getMessage(),message.getTime(),message.getRead(),message.getMySend()});
 		}
 	}
 

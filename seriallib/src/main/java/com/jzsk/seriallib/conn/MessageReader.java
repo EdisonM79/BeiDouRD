@@ -122,6 +122,7 @@ class MessageReader {
 				}
 				try {/*$ZJXX...%^&*()0-=.sdfasABCDEFGHI*/
 					byte[] buf = ArrayUtils.concatenate("$BDTXR,1,0412159,2,,北斗模块通信测试[混发模式]-!@#%^&*()~1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ.*33".getBytes(), new byte[]{0x0D, 0x0A});
+					//byte[] buf = ArrayUtils.concatenate("$BDBSI,00,00,1,3,2,4,0,3,1,4,2,1*5E".getBytes(), new byte[]{0x0D, 0x0A});
 					int len = buf.length;
 					byte[] data = new byte[len];
 					System.arraycopy(buf, 0, data, 0, len);

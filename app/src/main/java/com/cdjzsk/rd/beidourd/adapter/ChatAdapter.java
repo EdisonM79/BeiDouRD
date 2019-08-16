@@ -10,9 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-    import com.cdjzsk.rd.beidourd.ChatActivity;
 import com.cdjzsk.rd.beidourd.R;
 import com.cdjzsk.rd.beidourd.bean.MsgData;
+import com.cdjzsk.rd.beidourd.utils.Constant;
 import com.cdjzsk.rd.beidourd.utils.HelpUtils;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MsgViewHolder>
         if (position >= 1)
             preMsgData = listData.get(position - 1);
         switch (currentMsgData.getMsgType()) {
-            case ChatActivity.TYPE_RECEIVER_MSG:
+            case Constant.TYPE_RECEIVER_MSG:
                 initTimeStamp(holder, currentMsgData, preMsgData);
                 holder.senderLayout.setVisibility(View.GONE);
                 holder.receiverLayout.setVisibility(View.VISIBLE);
@@ -58,7 +58,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MsgViewHolder>
                 break;
 
 
-            case ChatActivity.TYPE_SENDER_MSG:
+            case Constant.TYPE_SENDER_MSG:
                 initTimeStamp(holder, currentMsgData, preMsgData);
                 holder.senderLayout.setVisibility(View.VISIBLE);
                 holder.receiverLayout.setVisibility(View.GONE);

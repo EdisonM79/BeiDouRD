@@ -4,28 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="10dp">
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-
-            </LinearLayout>
             <ListView
                 android:id="@+id/activity_wechat_lv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -40,7 +34,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/activity_wechat_chat_toolbar"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:background="@color/colorLightDark"
             android:fitsSystemWindows="true"
             app:contentInsetStart="0dp"
@@ -82,9 +76,12 @@
                 android:layout_gravity="right"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
-                android:padding="@dimen/item_margin_left"
+                android:paddingLeft="3dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="3dp"
                 android:src="@drawable/profile_info"
-                tools:layout_editor_absoluteX="538dp" />
+                tools:layout_editor_absoluteX="538dp"
+                tools:layout_editor_absoluteY="8dp" />
 
 
         </android.support.v7.widget.Toolbar>
@@ -106,8 +103,8 @@
             android:layout_height="48dp"
             android:background="@drawable/input_bg"
             android:gravity="center"
-            android:weightSum="6"
             android:orientation="horizontal"
+            android:weightSum="6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
@@ -132,20 +129,10 @@
                     android:id="@+id/activity_wechat_chat_btn_send"
                     android:layout_width="42dp"
                     android:layout_height="32dp"
-                    android:text="@string/send"
-                    android:textColor="@color/colorWhite"
-                    android:background="@drawable/send_btn_bg"
-                    android:layout_gravity="center"/>
-                <ImageView
-                    android:id="@+id/activity_wechat_chat_iv_add"
-                    android:layout_width="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/margin"
-                    android:background="?selectableItemBackground"
-                    android:clickable="true"
-                    android:src="@drawable/icon_add" />
-
+                    android:background="@drawable/send_btn_bg"
+                    android:text="@string/send"
+                    android:textColor="@color/colorWhite" />
 
             </FrameLayout>
 

@@ -10,6 +10,10 @@ public class MsgData {
     private int profile_res;
     private int msgType;
 
+    public MsgData() {
+
+    }
+
     public MsgData(String msg, long timeStamp, int hd_img_res, int msgType) {
         this.msg = msg;
         this.timeStamp = timeStamp;

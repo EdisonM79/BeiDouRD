@@ -7,18 +7,19 @@ public class MessageInfo {
 	private String message;
 	private String time;
 	private String read;
+	private String mySend;
 
 
-	public MessageInfo() {
-	}
+	public MessageInfo() {}
 
-	public MessageInfo(Integer id, String sendId, String receiveId, String message, String time, String read) {
+	public MessageInfo(Integer id, String sendId, String receiveId, String message, String time, String read, String mySend) {
 		this.id = id;
 		this.sendId = sendId;
 		this.receiveId = receiveId;
 		this.message = message;
 		this.time = time;
 		this.read = read;
+		this.mySend = mySend;
 	}
 
 	public Integer getId() {
@@ -67,5 +68,13 @@ public class MessageInfo {
 
 	public void setRead(String read) {
 		this.read = read;
+	}
+
+	public String getMySend() {
+		return mySend;
+	}
+
+	public void setMySend(String mySend) {
+		this.mySend = mySend;
 	}
 }

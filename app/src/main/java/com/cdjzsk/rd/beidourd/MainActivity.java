@@ -4,21 +4,18 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.cdjzsk.rd.beidourd.adapter.ContactAdapter;
-import com.cdjzsk.rd.beidourd.bean.ContactShowInfo;
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
 import com.cdjzsk.rd.beidourd.data.entity.User;
+import com.cdjzsk.rd.beidourd.utils.Constant;
 import com.cdjzsk.rd.beidourd.utils.SerialPortUtils;
 import com.cdjzsk.rd.beidourd.utils.multiChildHistogram.MultiGroupHistogramChildData;
 import com.cdjzsk.rd.beidourd.utils.multiChildHistogram.MultiGroupHistogramGroupData;
@@ -31,10 +28,8 @@ import com.jzsk.seriallib.util.LogUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,46 +47,8 @@ public class MainActivity extends AppCompatActivity {
 	Button messageButton;
 	@BindView(R.id.sosButton)
 	Button sosButton;
-//	@BindView(R.id.bs_tv_2)
-//	TextView bsiTv_2;
-//	@BindView(R.id.bs_tv_3)
-//	TextView bsiTv_3;
-//	@BindView(R.id.bs_tv_4)
-//	TextView bsiTv_4;
-//	@BindView(R.id.bs_tv_5)
-//	TextView bsiTv_5;
-//	@BindView(R.id.bs_tv_6)
-//	TextView bsiTv_6;
-//	@BindView(R.id.bs_tv_7)
-//	TextView bsiTv_7;
-//	@BindView(R.id.bs_tv_8)
-//	TextView bsiTv_8;
-//	@BindView(R.id.bs_tv_9)
-//	TextView bsiTv_9;
-//	@BindView(R.id.vertical_progressbar0)
-//	ProgressBar progressBar0;
-//	@BindView(R.id.vertical_progressbar1)
-//	ProgressBar progressBar1;
-//	@BindView(R.id.vertical_progressbar2)
-//	ProgressBar progressBar2;
-//	@BindView(R.id.vertical_progressbar3)
-//	ProgressBar progressBar3;
-//	@BindView(R.id.vertical_progressbar4)
-//	ProgressBar progressBar4;
-//	@BindView(R.id.vertical_progressbar5)
-//	ProgressBar progressBar5;
-//	@BindView(R.id.vertical_progressbar6)
-//	ProgressBar progressBar6;
-//	@BindView(R.id.vertical_progressbar7)
-//	ProgressBar progressBar7;
-//	@BindView(R.id.vertical_progressbar8)
-//	ProgressBar progressBar8;
-//	@BindView(R.id.vertical_progressbar9)
-//	ProgressBar progressBar9;
-
 	private OrientationEventListener orientationEventListener;
 	private MultiGroupHistogramView multiGroupHistogramView;
-	ListView lv;
 	//本机卡号
 	public String mCardId;
 	//串口操作
@@ -100,21 +57,6 @@ public class MainActivity extends AppCompatActivity {
 	public SerialPortUtils serialPortUtils;
 	//数据库
 	private MyDataHander myDataHander;
-	//读卡指令
-	private String ICA = "CCICA,0,00";
-	//打开波束功率
-	private String BSI = "CCRMO,BSI,2,1";
-	//消息已读标志
-	public static final String MESSAGE_READ = "1";
-	//消息未读标志
-	public static final String MESSAGE_NOTREAD = "0";
-	//高度
-	private int toolbarHeight, statusBarHeight;
-	//联系人展示列表
-	List<ContactShowInfo> infos = new LinkedList<>();
-	//联系人适配器
-	private ContactAdapter adapter;
-	private Handler mHandler = new Handler();
 
 
 
@@ -133,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
 		//点击读卡按钮，发送读卡指令，打开波束功率输出
 		readButton.setOnClickListener((View view)-> {
 				//发送读卡指令
-				SerialPortUtils.sendControl(ICA);
+				SerialPortUtils.sendControl(Constant.ICA);
 				//发送打开波束功率输出指令
-				SerialPortUtils.sendControl(BSI);
+				SerialPortUtils.sendControl(Constant.BSI);
 		});
 		//点击短报文按钮跳转到聊天界面
 		messageButton.setOnClickListener((View view)-> {
@@ -151,25 +93,38 @@ public class MainActivity extends AppCompatActivity {
 			System.out.println("this is lambda");
 		});
 
-		init();
+		initHistogram();
 	}
-	private void init() {
+
+	/**
+	 * 获取柱状图UI界面，设置水平监听器
+	 */
+	private void initHistogram() {
 		multiGroupHistogramView = findViewById(R.id.multiGroupHistogramView);
-		initMultiGroupHistogramView();
 		initOrientationListener();
 	}
 
-	private void initMultiGroupHistogramView() {
-		Random random = new Random();
-		int groupSize = 10;
+	/**
+	 * 处理波束功率BSI数据，设置柱状图数据
+	 * @param BSI
+	 */
+	private void initMultiGroupHistogramView(String BSI) {
+
+		String[] bsiList = BSI.split(",");
 		List<MultiGroupHistogramGroupData> groupDataList = new ArrayList<>();
-		for (int i = 0; i < groupSize; i++) {
+		for (int i = 0; i < 10; i++) {
 			List<MultiGroupHistogramChildData> childDataList = new ArrayList<>();
 			MultiGroupHistogramGroupData groupData = new MultiGroupHistogramGroupData();
 			groupData.setGroupName(String.valueOf(i + 1));
 			MultiGroupHistogramChildData childData1 = new MultiGroupHistogramChildData();
 			childData1.setSuffix("");
-			childData1.setValue(random.nextInt(5));
+			if (i == 9) {
+				//最后一位包含波束功率，"*"和校验和
+				String last = bsiList[12].substring(0,1);
+				childData1.setValue(Float.valueOf(last));
+			} else {
+				childData1.setValue(Float.valueOf(bsiList[3+i]));
+			}
 			childDataList.add(childData1);
 			groupData.setChildDataList(childDataList);
 			groupDataList.add(groupData);
@@ -181,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
 		multiGroupHistogramView.setHistogramColor(color1);
 	}
 
+	/**
+	 * 初始化水平方向的监听器
+	 */
 	private void initOrientationListener() {
 		orientationEventListener = new OrientationEventListener(this) {
 			@Override
@@ -208,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
 		};
 	}
 
-
-
 	/**
 	 * 初始化串口工具，设置串口监听类
 	 */
@@ -229,6 +185,10 @@ public class MainActivity extends AppCompatActivity {
 		mSerialClient = SerialPortUtils.getSerialClient();
 	}
 
+	/**
+	 * 处理接收到的数据，并且更改UI的显示
+	 * @param msg
+	 */
 	private void updataUI(final String msg){
 		runOnUiThread(new Runnable() {
 			@Override
@@ -250,15 +210,15 @@ public class MainActivity extends AppCompatActivity {
 					String[] msgList = msg.split(",");
 					MessageInfo messageInfo = new MessageInfo();
 					//接收ID
-					//messageInfo.setReceiveId(mCardId);
 					messageInfo.setReceiveId(mCardId);
 					//发送ID
 					String userId = msgList[2];
 					messageInfo.setSendId(userId);
+					//计算长度
 					int index = msgList[5].length();
-					//去掉末尾的*34/r/n
-					//消息内容
+					//去掉末尾的*34/r/n以后的消息内容
 					String message = msgList[5].substring(0,(index-5));
+					//消息内容
 					messageInfo.setMessage(message);
 					//获取当前系统时间
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -266,7 +226,9 @@ public class MainActivity extends AppCompatActivity {
 					//接收消息的本地时间
 					messageInfo.setTime(time);
 					//设置消息为未读
-					messageInfo.setRead(MESSAGE_NOTREAD);
+					messageInfo.setRead(Constant.MESSAGE_NOTREAD);
+					//设置消息标志--不是本机发送
+					messageInfo.setMySend(Constant.MESSAGE_NOTMYSEND);
 					//将信息存入数据库
 					myDataHander.addMessage(messageInfo);
 					//用发送人ID去查询是否是已有联系人
@@ -281,55 +243,12 @@ public class MainActivity extends AppCompatActivity {
 						user.setImage(R.drawable.hdimg_1);
 						//保存用户
 						myDataHander.addUser(user);
-
-						//将新消息添加到队列
-						infos.add(new ContactShowInfo(userId,R.drawable.hdimg_1,userId,message,time,false));
-						if (infos.size() > 1) {
-						} else {
-							adapter.notifyDataSetChanged();
-						}
-
-					} else { //存在联系人，直接更新就可以了
-						//有新消息,需要更新联系人list
-						for (int i = 0; i < infos.size(); i++) {
-							String infoCardId = infos.get(i).getCardId();
-							if (infoCardId.equals(userId)) {
-								//设置为新的消息
-								infos.get(i).setLastMsg(message);
-								//设置为新的时间
-								infos.get(i).setLastMsgTime(time);
-								//设置消息为未读
-								infos.get(i).setRead(false);
-							}
-						}
 					}
-
 				}
 				if(msg.contains("BDBSI"))
 				{
-					String[] bsiList = msg.split(",");
-//					bsiTv_0.setText(bsiList[3]);
-//					progressBar0.setProgress(Integer.parseInt(bsiList[3]));
-//					bsiTv_1.setText(bsiList[4]);
-//					progressBar1.setProgress(Integer.parseInt(bsiList[4]));
-//					bsiTv_2.setText(bsiList[5]);
-//					progressBar2.setProgress(Integer.parseInt(bsiList[5]));
-//					bsiTv_3.setText(bsiList[6]);
-//					progressBar3.setProgress(Integer.parseInt(bsiList[6]));
-//					bsiTv_4.setText(bsiList[7]);
-//					progressBar4.setProgress(Integer.parseInt(bsiList[7]));
-//					bsiTv_5.setText(bsiList[8]);
-//					progressBar5.setProgress(Integer.parseInt(bsiList[8]));
-//					bsiTv_6.setText(bsiList[9]);
-//					progressBar6.setProgress(Integer.parseInt(bsiList[9]));
-//					bsiTv_7.setText(bsiList[10]);
-//					progressBar7.setProgress(Integer.parseInt(bsiList[10]));
-//					bsiTv_8.setText(bsiList[11]);
-//					progressBar8.setProgress(Integer.parseInt(bsiList[11]));
-//					//最后一位包含波束功率，"*"和校验和
-//					String last = bsiList[12].substring(0,1);
-//					bsiTv_9.setText(last);
-//					progressBar9.setProgress(Integer.parseInt(last));
+					//处理波束功率数据显示
+					initMultiGroupHistogramView(msg);
 				}
 			}
 		});
@@ -349,9 +268,9 @@ public class MainActivity extends AppCompatActivity {
 	protected void onStart() {
 		super.onStart();
 		//发送读卡指令
-		SerialPortUtils.sendControl(ICA);
+		SerialPortUtils.sendControl(Constant.ICA);
 		//发送打开波束功率输出指令
-		SerialPortUtils.sendControl(BSI);
+		SerialPortUtils.sendControl(Constant.BSI);
 	}
 
 	@Override
@@ -369,6 +288,10 @@ public class MainActivity extends AppCompatActivity {
 		if (orientationEventListener != null) {
 			orientationEventListener.enable();
 		}
+		//发送读卡指令
+		SerialPortUtils.sendControl(Constant.ICA);
+		//发送打开波束功率输出指令
+		SerialPortUtils.sendControl(Constant.BSI);
 	}
 
 	@Override

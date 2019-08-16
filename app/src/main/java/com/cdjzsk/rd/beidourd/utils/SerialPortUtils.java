@@ -30,8 +30,8 @@ public class SerialPortUtils implements ClientStateCallback {
 		//从外部传一个监听器过来
 		mSerialClient.setMessageListener(ml);
 		//模拟串口读取模式
-		mSerialClient.setDebugMode(false);
-		//mSerialClient.setDebugMode(true);
+		//mSerialClient.setDebugMode(false);
+		mSerialClient.setDebugMode(true);
 		//打开串口
 		mSerialClient.connect(this,SupportProtcolVersion.V21);
 	}
