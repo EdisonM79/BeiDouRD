@@ -40,7 +40,7 @@ import java.util.Locale;
 
 
 /**
- * @author shawn 小烦 2017/8/9.
+ * @author Edison 2019/8/19.
  */
 
 public class ChatActivity extends AppCompatActivity {
@@ -105,10 +105,18 @@ public class ChatActivity extends AppCompatActivity {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				//发送状态反馈
 				if(msg.contains("BDFKI"))
 				{
 					String[]  result = msg.split(",");
 				}
+				/**
+				 *  在聊天页面接收到消息需要3重处理
+				 *  1.存入数据库
+				 *  2.如果是当前聊天对象，更新聊天信息
+				 *  3.更新联系人列表
+				 *  先实现功能，再来简化
+				 * */
 				if(msg.contains("BDTXR"))
 				{
 					String[] msgList = msg.split(",");
@@ -148,7 +156,14 @@ public class ChatActivity extends AppCompatActivity {
 						//保存用户
 						MyDataHander.addUser(user);
 					}
-					initComponents();
+
+					/************更新联系人列表*************/
+					//查询联系人列表里面是否有当前消息的发送人
+					int listLength = contactShowInfo.size();
+
+
+
+
 				}
 			}
 		});
