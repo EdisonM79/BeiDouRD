@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,24 +46,28 @@ import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
 
-	//
+
+	/** 名称显示 */
+	TextView nameText;
+	/** 添加按钮*/
+	Button button;
 	ListView contactListView;
 	/** 聊天对方的Id*/
     private String otherId;
     //本机的卡号Id*/
-	private String myId;
+	private String myId = "0412159";
 
     /** 原始的聊天数据列表*/
     public List<MessageInfo> messageInfos;
 	/** 封装的聊天信息数据*/
-    public List<MsgData> displayMessageData;
+    public List<MsgData> displayMessageData = new ArrayList<MsgData>();
 	 /** 聊天信息适配器*/
     private ChatAdapter chatadapter;
 
 	/** 数据库联系人列表 */
 	public List<User> contacts;
 	/** 封装后联系人列表*/
-	List<ContactShowInfo> contactShowInfo;
+	List<ContactShowInfo> contactShowInfo = new ArrayList<ContactShowInfo>();;
 	/** 联系人适配器 */
 	ContactAdapter contactAdapter;
 
@@ -79,6 +84,18 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wechat_chat);
         initComponents();
 	    initSerialClient();
+		nameText = findViewById(R.id.activity_wechat_chat_tv_name);
+	    button = findViewById(R.id.addUser);
+	    button.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+		    	User user = new User();
+		    	user.setUserName("微笑的鱼");
+		    	user.setImage(R.drawable.hdimg_1);
+		    	user.setUserId("0412159");
+			    MyDataHander.addUser(user);
+		    }
+	    });
     }
 	/**
 	 * 初始化串口工具，设置串口监听类
@@ -122,7 +139,7 @@ public class ChatActivity extends AppCompatActivity {
 					String[] msgList = msg.split(",");
 					MessageInfo messageInfo = new MessageInfo();
 					//接收ID
-					messageInfo.setReceiveId("0412159");
+					messageInfo.setReceiveId(myId);
 					//发送ID
 					String userId = msgList[2];
 					messageInfo.setSendId(userId);
@@ -160,10 +177,62 @@ public class ChatActivity extends AppCompatActivity {
 					/************更新联系人列表*************/
 					//查询联系人列表里面是否有当前消息的发送人
 					int listLength = contactShowInfo.size();
+					boolean isHave = false;
+					for (int i = 0; i < listLength ; i++) {
+						String have = contactShowInfo.get(i).getCardId();
+						//联系人列表里面存在有当前消息发送人
+						if (have.equals(userId)) {
+							isHave = true;
+							//更新最后消息和最后时间
+							ContactShowInfo exchange = contactShowInfo.get(i);
+							exchange.setLastMsg(message);
+							exchange.setLastMsgTime(time);
+							contactShowInfo.set(i,exchange);
+						}
+					}
+					//如果在联系人列表里面没有，则需要新添加
+					if (!isHave) {
+						ContactShowInfo newContact = new ContactShowInfo();
+						newContact.setCardId(userId);
+						newContact.setHeadImage(R.drawable.hdimg_1);
+						newContact.setLastMsg(message);
+						newContact.setLastMsgTime(time);
+						newContact.setUsername(userId);
+						newContact.setRead(false);
+						contactShowInfo.add(newContact);
+					}
+					//通知联系人适配器数据更改
+					contactAdapter.notifyDataSetChanged();
 
-
-
-
+					/************更新对话信息*************/
+					//来信人正好为当前联系人,则更新界面，否则不更新
+					if (otherId.equals(userId)) {
+						//Java中String类型转换成数据库中的日期类型，添加到数据库
+						//创建sdf对象，指定日期格式类型
+						SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						//sdf将字符串转化成java.util.Date
+						java.util.Date parse=null;
+						String timeString = messageInfo.getTime();
+						try {
+							parse = sdf2.parse(timeString);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+						//java.util.Date转换成long
+						long time2 = parse.getTime();
+						MsgData msgData = new MsgData();
+						//设置消息时间
+						msgData.setTimeStamp(time2);
+						//设置消息内容
+						msgData.setMsg(messageInfo.getMessage());
+						//设置消息类别
+						int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND)?Constant.TYPE_SENDER_MSG:Constant.TYPE_RECEIVER_MSG;
+						msgData.setMsgType(msgType);
+						msgData.setProfile_res(Constant.OTHER_IMAGE);
+						displayMessageData.add(msgData);
+						displayMessageData.add(displayMessageData.size(), msgData);
+						chatadapter.notifyDataSetChanged();
+					}
 				}
 			}
 		});
@@ -208,19 +277,22 @@ public class ChatActivity extends AppCompatActivity {
         if (contacts.size() != 0) {
 	        for (int i = 0; i < contacts.size(); i++) {
 		        String contactId = contacts.get(i).getUserId();
-		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId( myId, contactId);
+		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId( "0412159", contactId);
+
 		        ContactShowInfo csi = new ContactShowInfo();
 		        //联系人卡号
 		        csi.setCardId(contactId);
 		        //联系人头像
 		        csi.setHeadImage(contacts.get(i).getImage());
-		        //最后一次消息内容
-		        csi.setLastMsg(messageInfo.getMessage());
-		        //最后一次消息时间
-		        csi.setLastMsgTime(messageInfo.getTime());
-		        //消息是否已读
-		        Boolean isRead = (messageInfo.getRead()).equals("1")?true:false;
-		        csi.setRead(isRead);
+		        if (null != messageInfo) {
+			        //最后一次消息内容
+			        csi.setLastMsg(messageInfo.getMessage());
+			        //最后一次消息时间
+			        csi.setLastMsgTime(messageInfo.getTime());
+			        //消息是否已读
+			        Boolean isRead = (messageInfo.getRead()).equals("1")?true:false;
+			        csi.setRead(isRead);
+		        }
 		        //联系人昵称
 		        csi.setUsername(contacts.get(i).getUserName());
 		        contactShowInfo.add(csi);
@@ -230,43 +302,94 @@ public class ChatActivity extends AppCompatActivity {
 	        contactListView = findViewById(R.id.activity_wechat_lv);
 	        //给联系人列表UI设置适配器和数据
 	        contactListView.setAdapter(contactAdapter);
+	        contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		        @Override
+		        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+			        ContactShowInfo sci = contactShowInfo.get(i);
+			        otherId = sci.getCardId();
+			        //清除以前的数据
+			        displayMessageData.clear();
+			        nameText.setText(sci.getUsername());
+
+			        /** 数据库中取出20条最新的消息数据 */
+			        //从数据库中取出20条最新的消息数据
+			        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(sci.getCardId(), 0, 20);
+			        if (null != messageInfos) {
+				        //将这20条数据设置为已读
+				        int length = messageInfos.size();
+				        for (int j = 0; j < length; j++) {
+					        MyDataHander.updateReadStateByMessageId(Constant.MESSAGE_READ, messageInfos.get(j).getId());
+				        }
+				        //重新装新的数据
+				        for (int k = 0; k < length; k++) {
+					        MessageInfo messageInfo = messageInfos.get(length - k - 1);
+					        //Java中String类型转换成数据库中的日期类型，添加到数据库
+					        //创建sdf对象，指定日期格式类型
+					        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					        //sdf将字符串转化成java.util.Date
+					        java.util.Date parse = null;
+					        String timeString = messageInfo.getTime();
+					        try {
+						        parse = sdf.parse(timeString);
+					        } catch (ParseException e) {
+						        e.printStackTrace();
+					        }
+					        //java.util.Date转换成long
+					        long time = parse.getTime();
+					        MsgData msgData = new MsgData();
+					        //设置消息时间
+					        msgData.setTimeStamp(time);
+					        //设置消息内容
+					        msgData.setMsg(messageInfo.getMessage());
+					        //设置消息类别
+					        int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND) ? Constant.TYPE_SENDER_MSG : Constant.TYPE_RECEIVER_MSG;
+					        msgData.setMsgType(msgType);
+					        msgData.setProfile_res(Constant.OTHER_IMAGE);
+					        displayMessageData.add(k, msgData);
+				        }
+			        }
+			        chatadapter.notifyDataSetChanged();
+		        }
+	        });
+
+
 	        /** 数据库中取出20条最新的消息数据 */
 	        //从数据库中取出20条最新的消息数据
 	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(otherId,0,20);
-	        //将这20条数据设置为已读
-	        int length = messageInfos.size();
-	        for(int i = 0; i < length; i++) {
-		        MyDataHander.updateReadStateByMessageId(Constant.MESSAGE_READ, messageInfos.get(i).getId());
-	        }
-
 	        displayMessageData = new ArrayList<>();
-	        for (int i = 0; i < length; i++) {
-		        MessageInfo messageInfo = messageInfos.get(length - i - 1);
-		        //Java中String类型转换成数据库中的日期类型，添加到数据库
-		        //创建sdf对象，指定日期格式类型
-		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		        //sdf将字符串转化成java.util.Date
-		        java.util.Date parse=null;
-		        String timeString = messageInfo.getTime();
-		        try {
-			        parse = sdf.parse(timeString);
-		        } catch (ParseException e) {
-			        e.printStackTrace();
+	        if (null != messageInfos) {
+		        //将这20条数据设置为已读
+		        int length = messageInfos.size();
+		        for(int i = 0; i < length; i++) {
+			        MyDataHander.updateReadStateByMessageId(Constant.MESSAGE_READ, messageInfos.get(i).getId());
 		        }
-		        //java.util.Date转换成long
-		        long time = parse.getTime();
-		        MsgData msgData = new MsgData();
-		        //设置消息时间
-		        msgData.setTimeStamp(time);
-		        //设置消息内容
-		        msgData.setMsg(messageInfo.getMessage());
-		        //设置消息类别
-		        int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND)?Constant.TYPE_SENDER_MSG:Constant.TYPE_RECEIVER_MSG;
-		        msgData.setMsgType(msgType);
-		        msgData.setProfile_res(Constant.OTHER_IMAGE);
-		        displayMessageData.add(i, msgData);
+		        for (int i = 0; i < length; i++) {
+			        MessageInfo messageInfo = messageInfos.get(length - i - 1);
+			        //Java中String类型转换成数据库中的日期类型，添加到数据库
+			        //创建sdf对象，指定日期格式类型
+			        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			        //sdf将字符串转化成java.util.Date
+			        java.util.Date parse=null;
+			        String timeString = messageInfo.getTime();
+			        try {
+				        parse = sdf.parse(timeString);
+			        } catch (ParseException e) {
+				        e.printStackTrace();
+			        }
+			        //java.util.Date转换成long
+			        long time = parse.getTime();
+			        MsgData msgData = new MsgData();
+			        //设置消息时间
+			        msgData.setTimeStamp(time);
+			        //设置消息内容
+			        msgData.setMsg(messageInfo.getMessage());
+			        //设置消息类别
+			        int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND)?Constant.TYPE_SENDER_MSG:Constant.TYPE_RECEIVER_MSG;
+			        msgData.setMsgType(msgType);
+			        msgData.setProfile_res(Constant.OTHER_IMAGE);
+			        displayMessageData.add(i, msgData);
+		        }
 	        }
-
 	        chatadapter = new ChatAdapter(this, displayMessageData);
 	        rv.setAdapter(chatadapter);
 	        rv.scrollToPosition(displayMessageData.size() - 1);
@@ -285,7 +408,7 @@ public class ChatActivity extends AppCompatActivity {
             //通过串口将数据发送到RD模块
             SerialPortUtils.sendMessage(otherId,sendMsg);
 
-            //将数据存储到数据库
+            /**将数据存储到数据库*/
             MessageInfo messageInfo = new MessageInfo();
             //设置成已读
             messageInfo.setRead(Constant.MESSAGE_READ);
@@ -299,6 +422,8 @@ public class ChatActivity extends AppCompatActivity {
             messageInfo.setReceiveId(otherId);
             //发送的内容
             messageInfo.setMessage(sendMsg);
+            //设置成由我发送
+            messageInfo.setMySend(Constant.MESSAGE_MYSEND);
             //保存到数据库里面
             MyDataHander.addMessage(messageInfo);
         });
