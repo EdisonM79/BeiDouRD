@@ -21,4 +21,18 @@
     <string name="title_activity_login">登陆</string>
     <string name="delete">删除</string>
     <string name="more">更多</string>
+    <string name="title_activity_add_contact">添加联系人</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_card_Id">卡号</string>
+    <string name="prompt_name">昵称</string>
+    <string name="add_contact">添加联系人</string>
+    <string name="edit_contact">修改联系人</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>

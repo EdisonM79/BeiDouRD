@@ -9,35 +9,64 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_wechat_contact_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorLightDark"
+            android:fitsSystemWindows="true"
+            app:contentInsetStart="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/activity_wechat_chat_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:paddingLeft="5dp"
+                android:src="@drawable/back" />
+
+            <TextView
+                android:id="@+id/activity_wechat_chat_tv_name1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_img"
+                android:text="联系人"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/content_text_normal" />
+
+
+            <ImageView
+                android:id="@+id/addContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:clickable="true"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:paddingBottom="3dp"
+                android:src="@drawable/add"
+                tools:layout_editor_absoluteX="538dp"
+                tools:layout_editor_absoluteY="8dp" />
+        </android.support.v7.widget.Toolbar>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"/>
-                <Button
-                    android:id="@+id/addUser"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="添加"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-
             <ListView
                 android:id="@+id/activity_wechat_lv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/colorContactBackground" />
 
         </LinearLayout>
 
@@ -59,16 +88,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/activity_wechat_chat_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:background="?selectableItemBackground"
-                android:clickable="true"
-                android:padding="@dimen/margin_img"
-                android:src="@drawable/back" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -108,6 +127,7 @@
             android:id="@+id/activity_wechat_chat_rv"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@color/colorChatBackground"
             app:layout_constraintBottom_toTopOf="@+id/activity_wechat_chat_layout_bottom"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"

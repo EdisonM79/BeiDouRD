@@ -92,6 +92,9 @@ public class Connection {
 
 	public void setMessageListener(MessageListener messageListener) {
 		this.messageListener = messageListener;
+		if (null != mReader) {
+			mReader.setMessageListener(messageListener);
+		}
 	}
 
 	public void setDebugMode(boolean debugMode){

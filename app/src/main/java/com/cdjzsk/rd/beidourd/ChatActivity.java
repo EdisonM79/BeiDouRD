@@ -1,5 +1,6 @@
 package com.cdjzsk.rd.beidourd;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -49,8 +50,8 @@ public class ChatActivity extends AppCompatActivity {
 
 	/** 名称显示 */
 	TextView nameText;
-	/** 添加按钮*/
-	Button button;
+	/** 添加联系人*/
+	ImageView addContact;
 	ListView contactListView;
 	/** 聊天对方的Id*/
     private String otherId;
@@ -85,15 +86,17 @@ public class ChatActivity extends AppCompatActivity {
         initComponents();
 	    initSerialClient();
 		nameText = findViewById(R.id.activity_wechat_chat_tv_name);
-	    button = findViewById(R.id.addUser);
-	    button.setOnClickListener(new View.OnClickListener() {
+		//添加用户的按钮
+	    addContact = findViewById(R.id.addContact);
+	    addContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
-		    	User user = new User();
-		    	user.setUserName("微笑的鱼");
-		    	user.setImage(R.drawable.hdimg_1);
-		    	user.setUserId("0412159");
-			    MyDataHander.addUser(user);
+
+			    Intent intent = new Intent(ChatActivity.this, AddContactActivity.class);
+			    //intent.putExtra("id", mCardId);
+			    //intent.putExtra("name", "四川小花");
+			    startActivity(intent);
+
 		    }
 	    });
     }
@@ -244,7 +247,7 @@ public class ChatActivity extends AppCompatActivity {
 	    /**  发送信息按钮*/
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
 	    btn_send.startAnimation(getVisibleAnim(false, btn_send));
-	    btn_send.setVisibility(View.GONE);
+	    //btn_send.setVisibility(View.GONE);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
 	    iv_back.setOnClickListener((v) -> finish());
@@ -355,7 +358,8 @@ public class ChatActivity extends AppCompatActivity {
 
 	        /** 数据库中取出20条最新的消息数据 */
 	        //从数据库中取出20条最新的消息数据
-	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(otherId,0,20);
+	        //messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(otherId,0,20);
+	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId("0412159",0,20);
 	        displayMessageData = new ArrayList<>();
 	        if (null != messageInfos) {
 		        //将这20条数据设置为已读
