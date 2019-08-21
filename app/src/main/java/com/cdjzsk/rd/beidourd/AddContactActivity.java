@@ -68,9 +68,10 @@ public class AddContactActivity extends AppCompatActivity implements LoaderCallb
 		setContentView(R.layout.activity_add_contact);
 		// Set up the login form.
 		mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-		populateAutoComplete();
+		//populateAutoComplete();
 
 		mPasswordView = (EditText) findViewById(R.id.password);
+		//昵称的编辑监听器
 		mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -81,7 +82,7 @@ public class AddContactActivity extends AppCompatActivity implements LoaderCallb
 				return false;
 			}
 		});
-
+		/** 注册按钮的监听器 */
 		Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 		mEmailSignInButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -102,6 +103,7 @@ public class AddContactActivity extends AppCompatActivity implements LoaderCallb
 		getLoaderManager().initLoader(0, null, this);
 	}
 
+	//获取手机联系人权限
 	private boolean mayRequestContacts() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 			return true;
@@ -139,6 +141,7 @@ public class AddContactActivity extends AppCompatActivity implements LoaderCallb
 
 
 	/**
+	 * 尝试注册
 	 * Attempts to sign in or register the account specified by the login form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
@@ -190,11 +193,21 @@ public class AddContactActivity extends AppCompatActivity implements LoaderCallb
 		}
 	}
 
+	/**
+	 * 验证邮箱是否包含有*
+	 * @param email
+	 * @return
+	 */
 	private boolean isEmailValid(String email) {
 		//TODO: Replace this with your own logic
 		return email.contains("@");
 	}
 
+	/**
+	 * 验证密码长度
+	 * @param password
+	 * @return
+	 */
 	private boolean isPasswordValid(String password) {
 		//TODO: Replace this with your own logic
 		return password.length() > 4;
