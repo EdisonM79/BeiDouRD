@@ -37,7 +37,7 @@
                 android:id="@+id/activity_wechat_chat_tv_name1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_img"
+                android:layout_marginLeft="50dp"
                 android:text="联系人"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/content_text_normal" />

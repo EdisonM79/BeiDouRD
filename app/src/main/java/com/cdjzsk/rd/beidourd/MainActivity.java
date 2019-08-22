@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 		//window.setStatusBarColor(getResources().getColor(R.color.colorWhite));
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制竖屏
 		//HelpUtils.transparentNav(this);
 		ButterKnife.bind(this);
 		//初始化串口
@@ -82,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
 		//点击短报文按钮跳转到聊天界面
 		messageButton.setOnClickListener((View view)-> {
 			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-			intent.putExtra("id", mCardId);
-			intent.putExtra("name", "四川小花");
+			intent.putExtra("myId", mCardId);
 			startActivity(intent);
 
 		});
@@ -284,6 +284,12 @@ public class MainActivity extends AppCompatActivity {
 
 	@Override
 	protected void onResume() {
+		/**
+		 * 设置为横屏
+		 */
+		if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
 		super.onResume();
 		if (orientationEventListener != null) {
 			orientationEventListener.enable();

@@ -29,8 +29,13 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".AddContactActivity"
+            android:label="@string/title_activity_add_contact"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".EditContactActivity"
+            android:label="@string/title_activity_edit_contact"
             android:screenOrientation="landscape"
-            android:label="@string/title_activity_add_contact"></activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

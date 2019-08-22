@@ -66,6 +66,37 @@ public class MyDataHander {
 		}
 		return false;
 	}
+	/**
+	 * 查询是否存在昵称
+	 *
+	 * @return
+	 */
+	public static boolean isNameExit(String userName) {
+		int count = 0;
+
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
+
+		try {
+			db = dbHelper.getReadableDatabase();
+			// select count(Id) from Orders
+			cursor = db.rawQuery("SELECT COUNT (*) FROM user WHERE userName = ?", new String[]{userName});
+			if (cursor.moveToFirst()) {
+				count = cursor.getInt(0);
+			}
+			if (count > 0) return true;
+		} catch (Exception e) {
+			Log.e("db", "", e);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+			if (db != null) {
+				db.close();
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * 查询是否存在消息数据
@@ -133,22 +164,21 @@ public class MyDataHander {
 		return null;
 	}
 
-	/**`
-	 * 获取部分信息数据
-	 *
-	 * @param id
-	 * @param offset
-	 * @param maxResult
+	/**
+	 * 获取other的聊天记录
+	 * @param myCardId
+	 * @param otherCardId
 	 * @return
 	 */
-	public static List<MessageInfo> getScrollMessageBySendIdOrReceiveId(String id, int offset, int maxResult) {
+	public static List<MessageInfo> getScrollMessageBySendIdOrReceiveId(String myCardId, String otherCardId ) {
 		List<MessageInfo> messages = new ArrayList<MessageInfo>();
 		SQLiteDatabase db = null;
 		Cursor cursor = null;
 		try {
 			db = dbHelper.getReadableDatabase();
 			// select * from user  DESC按照时间的最新来排序
-			cursor = db.rawQuery("SELECT * FROM message WHERE sendId=? OR receiveId=? ORDER BY time DESC LIMIT ?,?", new String[]{id,id,String.valueOf(offset), String.valueOf(maxResult)});
+			cursor = db.rawQuery("SELECT * FROM message WHERE (sendId = ? AND receiveId = ?) OR (sendId = ? AND receiveId = ?)  ORDER BY time DESC",
+					new String[]{ myCardId, otherCardId, otherCardId, myCardId});
 			while (cursor.moveToNext()) {
 				Integer messageId = cursor.getInt(cursor.getColumnIndex("id"));
 				String sendId = cursor.getString(cursor.getColumnIndex("sendId"));
@@ -253,4 +283,12 @@ public class MyDataHander {
 		values.put("read",readState);
 		db.update("message",values,"id=?",new String[]{messageId.toString()});
 	}
+
+	public static void updateContactById(String userId, String userName) {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("userName", userName);
+		db.update("user",values,"id=?",new String[]{userId});
+	}
+
 }

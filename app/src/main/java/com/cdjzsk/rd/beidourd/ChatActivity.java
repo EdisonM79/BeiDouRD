@@ -52,6 +52,9 @@ public class ChatActivity extends AppCompatActivity {
 	TextView nameText;
 	/** 添加联系人*/
 	ImageView addContact;
+	/** 查看和修改联系人*/
+	ImageView editContact;
+
 	ListView contactListView;
 	/** 聊天对方的Id*/
     private String otherId;
@@ -83,18 +86,31 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wechat_chat);
+	    nameText = (TextView) findViewById(R.id.activity_wechat_chat_tv_name);
+
+	    Intent intent = getIntent();
+	    myId = intent.getStringExtra("myId");
+
         initComponents();
 	    initSerialClient();
-		nameText = findViewById(R.id.activity_wechat_chat_tv_name);
 		//添加用户的按钮
-	    addContact = findViewById(R.id.addContact);
+	    addContact = (ImageView) findViewById(R.id.addContact);
+	    editContact = (ImageView) findViewById(R.id.activity_wechat_chat_profile);
+	    editContact.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    Intent intent = new Intent(ChatActivity.this, EditContactActivity.class);
+			    intent.putExtra("otherId",otherId);
+			    intent.putExtra("otherName",nameText.getText().toString());
+			    startActivity(intent);
+		    }
+	    });
+
 	    addContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
 
 			    Intent intent = new Intent(ChatActivity.this, AddContactActivity.class);
-			    //intent.putExtra("id", mCardId);
-			    //intent.putExtra("name", "四川小花");
 			    startActivity(intent);
 
 		    }
@@ -172,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
 						//暂时先把名字设置为卡号
 						user.setUserName(userId);
 						//暂时先把头像设置为统一头像
-						user.setImage(R.drawable.hdimg_1);
+						user.setImage(Constant.OTHER_IMAGE);
 						//保存用户
 						MyDataHander.addUser(user);
 					}
@@ -197,7 +213,7 @@ public class ChatActivity extends AppCompatActivity {
 					if (!isHave) {
 						ContactShowInfo newContact = new ContactShowInfo();
 						newContact.setCardId(userId);
-						newContact.setHeadImage(R.drawable.hdimg_1);
+						newContact.setHeadImage(Constant.OTHER_IMAGE);
 						newContact.setLastMsg(message);
 						newContact.setLastMsgTime(time);
 						newContact.setUsername(userId);
@@ -266,8 +282,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.i("tag", "onTextChanged --- start -> " + start + " , count ->" + count + "，before ->" + before);
                 if (start == 0 && count > 0) {
-                    btn_send.startAnimation(getVisibleAnim(true, btn_send));
-                    btn_send.setVisibility(View.VISIBLE);
                 }
             }
             @Override
@@ -277,11 +291,14 @@ public class ChatActivity extends AppCompatActivity {
 
         /** 数据库中取出所有的联系人 */
         contacts = MyDataHander.getAllUser();
+	    /** 设置对方的卡号为当前第一个人 */
+	    otherId = contacts.get(0).getUserId();
+	    nameText.setText(contacts.get(0).getUserName());
+
         if (contacts.size() != 0) {
 	        for (int i = 0; i < contacts.size(); i++) {
 		        String contactId = contacts.get(i).getUserId();
-		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId( "0412159", contactId);
-
+		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId( myId, contactId);
 		        ContactShowInfo csi = new ContactShowInfo();
 		        //联系人卡号
 		        csi.setCardId(contactId);
@@ -314,9 +331,9 @@ public class ChatActivity extends AppCompatActivity {
 			        displayMessageData.clear();
 			        nameText.setText(sci.getUsername());
 
-			        /** 数据库中取出20条最新的消息数据 */
-			        //从数据库中取出20条最新的消息数据
-			        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(sci.getCardId(), 0, 20);
+			        /** 数据库中取出消息数据 */
+			        //从数据库中消息数据
+			        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(myId, otherId);
 			        if (null != messageInfos) {
 				        //将这20条数据设置为已读
 				        int length = messageInfos.size();
@@ -352,6 +369,7 @@ public class ChatActivity extends AppCompatActivity {
 				        }
 			        }
 			        chatadapter.notifyDataSetChanged();
+			        rv.scrollToPosition(displayMessageData.size() - 1);
 		        }
 	        });
 
@@ -359,7 +377,7 @@ public class ChatActivity extends AppCompatActivity {
 	        /** 数据库中取出20条最新的消息数据 */
 	        //从数据库中取出20条最新的消息数据
 	        //messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(otherId,0,20);
-	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId("0412159",0,20);
+	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(myId,otherId);
 	        displayMessageData = new ArrayList<>();
 	        if (null != messageInfos) {
 		        //将这20条数据设置为已读
@@ -441,9 +459,7 @@ public class ChatActivity extends AppCompatActivity {
             ScaleAnimation showAnim = new ScaleAnimation(0.01f, 1f, 0.01f, 1f, x, y);
             showAnim.setDuration(200);
             return showAnim;
-
         } else {
-
             ScaleAnimation hiddenAnim = new ScaleAnimation(1f, 0.01f, 1f, 0.01f, x, y);
             hiddenAnim.setDuration(200);
             return hiddenAnim;

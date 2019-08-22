@@ -3,6 +3,7 @@ package com.cdjzsk.rd.beidourd;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,16 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
-import com.cdjzsk.rd.beidourd.data.entity.User;
 
-/**
- * A login screen that offers login via email/password.
- */
-public class AddContactActivity extends AppCompatActivity  {
+public class EditContactActivity extends AppCompatActivity {
 
-	/**
-	 * Keep track of the login task to ensure we can cancel it if requested.
-	 */
 	private UserLoginTask mAuthTask = null;
 
 	// UI references.
@@ -37,21 +31,32 @@ public class AddContactActivity extends AppCompatActivity  {
 	private View mLoginFormView;
 	private ImageView reButton;
 
+	private String otherId;
+	private String otherName;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_contact);
+		setContentView(R.layout.activity_edit_contact);
+
+		Intent intent = getIntent();
+		otherId = intent.getStringExtra("otherId");
+		otherName = intent.getStringExtra("otherName");
+
 		// Set up the login form.
 		cardId = (EditText) findViewById(R.id.cardId);
-		reButton = (ImageView) findViewById(R.id.reButton);
+		cardId.setText(otherId);
 
+		reButton = (ImageView) findViewById(R.id.reButton);
 		reButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				finish();
 			}
 		});
+
 		contactName = (EditText) findViewById(R.id.contactName);
+		contactName.setText(otherName);
 		//昵称的编辑监听器
 		contactName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
@@ -63,6 +68,7 @@ public class AddContactActivity extends AppCompatActivity  {
 				return false;
 			}
 		});
+
 		/** 注册按钮的监听器 */
 		Button mEmailSignInButton = (Button) findViewById(R.id.button_Add_Contact);
 		mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -71,10 +77,10 @@ public class AddContactActivity extends AppCompatActivity  {
 				attemptLogin();
 			}
 		});
-
 		mLoginFormView = findViewById(R.id.login_form);
 		mProgressView = findViewById(R.id.login_progress);
 	}
+
 
 	/**
 	 * 尝试注册
@@ -115,12 +121,11 @@ public class AddContactActivity extends AppCompatActivity  {
 			focusView = cardId;
 			cancel = true;
 		}
-		if (isExist(id, name)) {
+/*		if (isExist(id, name)) {
 			cardId.setError(getString(R.string.error_data_exist));
 			focusView = cardId;
 			cancel = true;
-		}
-
+		}*/
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first
 			// form field with an error.
@@ -147,20 +152,8 @@ public class AddContactActivity extends AppCompatActivity  {
 	}
 
 	/**
-	 * 验证数据库是否存在卡号和昵称
-	 * @param id
-	 * @param name
-	 * @return
-	 */
-	private boolean isExist(String id, String name) {
-		//
-		boolean idExist = MyDataHander.isUserExit(id);
-		boolean nameExist = MyDataHander.isNameExit(name);
-		return idExist&&nameExist;
-	}
-
-	/**
 	 * 验证北斗卡的长度
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -228,11 +221,8 @@ public class AddContactActivity extends AppCompatActivity  {
 
 			try {
 				// Simulate network access.
-				User user = new User();
-				user.setUserId(id);
-				user.setUserName(name);
-				user.setImage(R.drawable.hdimg_1);
-				MyDataHander.addUser(user);
+				String name = contactName.getText().toString();
+				MyDataHander.updateContactById(otherId,name);
 
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -241,7 +231,6 @@ public class AddContactActivity extends AppCompatActivity  {
 			// TODO: register the new account here.
 			return true;
 		}
-
 
 		// 方法4：onPostExecute（）
 		// 作用：接收线程任务执行结果、将执行结果显示到UI组件

@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:text="添加联系人"
+            android:text="修改联系人"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/content_text_normal" />
 
@@ -103,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_message"
-                android:text="@string/title_activity_add_contact"
+                android:text="@string/activity_edit_contact"
                 android:textStyle="bold" />
 
         </LinearLayout>
