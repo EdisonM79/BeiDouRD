@@ -3,10 +3,15 @@ package com.cdjzsk.rd.beidourd.utils;
 import com.cdjzsk.rd.beidourd.R;
 
 public class Constant {
+
+	/** false时为测试模式 */
+	public static final boolean TEST_UI_MODEL = true;
 	/** 读卡指令*/
 	public static final String ICA = "CCICA,0,00";
 	/** 打开波束功率*/
-	public static final String BSI = "CCRMO,BSI,2,1";
+	public static final String OPEN_BSI = "CCRMO,BSI,2,1";
+	/** 关闭波束功率*/
+	public static final String CLOSE_BSI = "$CCRMO,BSI,1,1";
 	/** 消息已读标志*/
 	public static final String MESSAGE_READ = "1";
 	/** 消息未读标志*/

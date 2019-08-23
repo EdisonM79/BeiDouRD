@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -37,6 +36,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = LogUtils.makeTag(MainActivity.class);
+
 	@BindView(R.id.card_id)
 	TextView cardId;
 	@BindView(R.id.frequency)
@@ -47,49 +47,57 @@ public class MainActivity extends AppCompatActivity {
 	Button messageButton;
 	@BindView(R.id.sosButton)
 	Button sosButton;
-	private OrientationEventListener orientationEventListener;
-	private MultiGroupHistogramView multiGroupHistogramView;
-	//本机卡号
-	public String mCardId;
-	//串口操作
-	public SerialClient mSerialClient;
-	//串口工具类
-	public SerialPortUtils serialPortUtils;
-	//数据库
-	private MyDataHander myDataHander;
 
+	/** 水平监听器 */
+	private OrientationEventListener orientationEventListener;
+	/** 柱状图 */
+	private MultiGroupHistogramView multiGroupHistogramView;
+	/** 本机卡号 */
+	public String mCardId;
+	/** 串口操作 */
+	public SerialClient mSerialClient;
+	/** 串口工具类 */
+	public SerialPortUtils serialPortUtils;
+	/** 数据库操作类 */
+	private MyDataHander myDataHander;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
-		//window.setStatusBarColor(getResources().getColor(R.color.colorWhite));
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制竖屏
-		//HelpUtils.transparentNav(this);
+
 		ButterKnife.bind(this);
-		//初始化串口
-		initSerialClient();
+		if (Constant.TEST_UI_MODEL) {
+			//初始化串口
+			initSerialClient();
+		}
+
 		//初始化数据库
 		myDataHander = new MyDataHander(this);
 		//点击读卡按钮，发送读卡指令，打开波束功率输出
-		readButton.setOnClickListener((View view)-> {
+		readButton.setOnClickListener((View view) -> {
+			if (Constant.TEST_UI_MODEL) {
 				//发送读卡指令
 				SerialPortUtils.sendControl(Constant.ICA);
 				//发送打开波束功率输出指令
-				SerialPortUtils.sendControl(Constant.BSI);
+				SerialPortUtils.sendControl(Constant.OPEN_BSI);
+			}
 		});
 		//点击短报文按钮跳转到聊天界面
-		messageButton.setOnClickListener((View view)-> {
+		messageButton.setOnClickListener((View view) -> {
 			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			if (!Constant.TEST_UI_MODEL){
+				mCardId = "0412159";
+			}
 			intent.putExtra("myId", mCardId);
 			startActivity(intent);
 
 		});
 		//点击SOS按钮，暂时不做处理
-		sosButton.setOnClickListener((View view)->{
-			Log.d("SOS","Click SOS Button");
+		sosButton.setOnClickListener((View view) -> {
+			Log.d("SOS", "Click SOS Button");
 			System.out.println("this is lambda");
 		});
 
@@ -106,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
 	/**
 	 * 处理波束功率BSI数据，设置柱状图数据
+	 *
 	 * @param BSI
 	 */
 	private void initMultiGroupHistogramView(String BSI) {
@@ -120,18 +129,16 @@ public class MainActivity extends AppCompatActivity {
 			childData1.setSuffix("");
 			if (i == 9) {
 				//最后一位包含波束功率，"*"和校验和
-				String last = bsiList[12].substring(0,1);
+				String last = bsiList[12].substring(0, 1);
 				childData1.setValue(Float.valueOf(last));
 			} else {
-				childData1.setValue(Float.valueOf(bsiList[3+i]));
+				childData1.setValue(Float.valueOf(bsiList[3 + i]));
 			}
 			childDataList.add(childData1);
 			groupData.setChildDataList(childDataList);
 			groupDataList.add(groupData);
 		}
 		multiGroupHistogramView.setDataList(groupDataList);
-		//int[] color1 = new int[]{Color.parseColor("#00FF00"), Color.parseColor("#FF0000")};
-		//int[] color1 = new int[]{Color.parseColor("#FFD100"), Color.parseColor("#FF3300")};
 		int[] color1 = new int[]{Color.parseColor("#008000"), Color.parseColor("#32CD32")};
 		multiGroupHistogramView.setHistogramColor(color1);
 	}
@@ -187,26 +194,24 @@ public class MainActivity extends AppCompatActivity {
 
 	/**
 	 * 处理接收到的数据，并且更改UI的显示
+	 *
 	 * @param msg
 	 */
-	private void updataUI(final String msg){
+	private void updataUI(final String msg) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if(msg.contains("BDICI"))
-				{
+				if (msg.contains("BDICI")) {
 					String[] msgList = msg.split(",");
-					mCardId= msgList[1];
+					mCardId = msgList[1];
 					String freqy = msgList[5];
 					cardId.setText(mCardId);
 					frequency.setText(freqy);
 				}
-				if(msg.contains("BDFKI"))
-				{
-					String[]  result = msg.split(",");
+				if (msg.contains("BDFKI")) {
+					String[] result = msg.split(",");
 				}
-				if(msg.contains("BDTXR"))
-				{
+				if (msg.contains("BDTXR")) {
 					String[] msgList = msg.split(",");
 					MessageInfo messageInfo = new MessageInfo();
 					//接收ID
@@ -217,11 +222,11 @@ public class MainActivity extends AppCompatActivity {
 					//计算长度
 					int index = msgList[5].length();
 					//去掉末尾的*34/r/n以后的消息内容
-					String message = msgList[5].substring(0,(index-5));
+					String message = msgList[5].substring(0, (index - 5));
 					//消息内容
 					messageInfo.setMessage(message);
 					//获取当前系统时间
-					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 					String time = sdf.format(new Date());
 					//接收消息的本地时间
 					messageInfo.setTime(time);
@@ -245,8 +250,7 @@ public class MainActivity extends AppCompatActivity {
 						myDataHander.addUser(user);
 					}
 				}
-				if(msg.contains("BDBSI"))
-				{
+				if (msg.contains("BDBSI")) {
 					//处理波束功率数据显示
 					initMultiGroupHistogramView(msg);
 				}
@@ -257,48 +261,36 @@ public class MainActivity extends AppCompatActivity {
 	/**
 	 * 关闭串口
 	 */
-	private void closeSerialClient(){
-		if(mSerialClient != null) {
+	private void closeSerialClient() {
+		if (mSerialClient != null) {
 			mSerialClient.close();
 			mSerialClient = null;
 		}
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		//发送读卡指令
-		SerialPortUtils.sendControl(Constant.ICA);
-		//发送打开波束功率输出指令
-		SerialPortUtils.sendControl(Constant.BSI);
+	protected void onPostResume() {
+		super.onPostResume();
+		if (Constant.TEST_UI_MODEL) {
+			//发送读卡指令
+			SerialPortUtils.sendControl(Constant.ICA);
+			//发送打开波束功率输出指令
+			SerialPortUtils.sendControl(Constant.OPEN_BSI);
+		}
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		//关闭串口
-		closeSerialClient();
 		//关闭数据库连接
 		myDataHander = null;
+		if (Constant.TEST_UI_MODEL) {
+			//发送波束功率输出关闭指令
+			SerialPortUtils.sendControl(Constant.CLOSE_BSI);
+			closeSerialClient();
+		}
 	}
 
-	@Override
-	protected void onResume() {
-		/**
-		 * 设置为横屏
-		 */
-		if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
-		super.onResume();
-		if (orientationEventListener != null) {
-			orientationEventListener.enable();
-		}
-		//发送读卡指令
-		SerialPortUtils.sendControl(Constant.ICA);
-		//发送打开波束功率输出指令
-		SerialPortUtils.sendControl(Constant.BSI);
-	}
 
 	@Override
 	protected void onPause() {
@@ -307,4 +299,5 @@ public class MainActivity extends AppCompatActivity {
 			orientationEventListener.disable();
 		}
 	}
+
 }

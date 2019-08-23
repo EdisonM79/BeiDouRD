@@ -91,8 +91,11 @@ public class ChatActivity extends AppCompatActivity {
 	    Intent intent = getIntent();
 	    myId = intent.getStringExtra("myId");
 
-        initComponents();
-	    initSerialClient();
+		if (Constant.TEST_UI_MODEL) {
+			initComponents();
+			initSerialClient();
+		}
+
 		//添加用户的按钮
 	    addContact = (ImageView) findViewById(R.id.addContact);
 	    editContact = (ImageView) findViewById(R.id.activity_wechat_chat_profile);
