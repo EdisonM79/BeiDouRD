@@ -29,5 +29,5 @@ public class Constant {
 	/** 我的聊天头像*/
 	public final static int MY_IMAGE = R.drawable.hdimg_4;
 	/** 其他人聊天头像*/
-	public final static int OTHER_IMAGE = R.drawable.hdimg_3;
+	public final static int OTHER_IMAGE = R.drawable.icon_d;
 }

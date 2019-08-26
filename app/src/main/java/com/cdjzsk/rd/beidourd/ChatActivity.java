@@ -2,7 +2,6 @@ package com.cdjzsk.rd.beidourd;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,8 +10,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,13 +51,12 @@ public class ChatActivity extends AppCompatActivity {
 	ImageView addContact;
 	/** 查看和修改联系人*/
 	ImageView editContact;
-
+	/** 联系人ListView */
 	ListView contactListView;
 	/** 聊天对方的Id*/
     private String otherId;
-    //本机的卡号Id*/
-	private String myId = "0412159";
-
+    /**本机的卡号Id*/
+	private String myId;
     /** 原始的聊天数据列表*/
     public List<MessageInfo> messageInfos;
 	/** 封装的聊天信息数据*/
@@ -75,12 +71,6 @@ public class ChatActivity extends AppCompatActivity {
 	/** 联系人适配器 */
 	ContactAdapter contactAdapter;
 
-	/** 搜索框等工具栏的高度*/
-	private int toolbarHeight;
-	/** 状态栏的高度*/
-	private int statusBarHeight;
-
-	private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,9 +86,11 @@ public class ChatActivity extends AppCompatActivity {
 			initSerialClient();
 		}
 
-		//添加用户的按钮
+		/** 添加用户的按钮 */
 	    addContact = (ImageView) findViewById(R.id.addContact);
+	    /** 编辑用户的按钮 */
 	    editContact = (ImageView) findViewById(R.id.activity_wechat_chat_profile);
+	    //编辑用户按钮点击事件
 	    editContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
@@ -108,14 +100,12 @@ public class ChatActivity extends AppCompatActivity {
 			    startActivity(intent);
 		    }
 	    });
-
+	    //添加用户按钮点击事件
 	    addContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
-
 			    Intent intent = new Intent(ChatActivity.this, AddContactActivity.class);
 			    startActivity(intent);
-
 		    }
 	    });
     }
@@ -123,7 +113,6 @@ public class ChatActivity extends AppCompatActivity {
 	 * 初始化串口工具，设置串口监听类
 	 */
 	private void initSerialClient() {
-
 		SerialPortUtils.exchangeListener(new MessageListener() {
 			@Override
 			public void processMessage(BaseMessage msg) {
@@ -251,7 +240,6 @@ public class ChatActivity extends AppCompatActivity {
 						int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND)?Constant.TYPE_SENDER_MSG:Constant.TYPE_RECEIVER_MSG;
 						msgData.setMsgType(msgType);
 						msgData.setProfile_res(Constant.OTHER_IMAGE);
-						displayMessageData.add(msgData);
 						displayMessageData.add(displayMessageData.size(), msgData);
 						chatadapter.notifyDataSetChanged();
 					}
@@ -259,14 +247,13 @@ public class ChatActivity extends AppCompatActivity {
 			}
 		});
 	}
+
     private void initComponents() {
 
     	/**  显示聊天对象的姓名*/
         TextView tv_userName = findViewById(R.id.activity_wechat_chat_tv_name);
 	    /**  发送信息按钮*/
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
-	    btn_send.startAnimation(getVisibleAnim(false, btn_send));
-	    //btn_send.setVisibility(View.GONE);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
 	    iv_back.setOnClickListener((v) -> finish());
@@ -285,6 +272,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.i("tag", "onTextChanged --- start -> " + start + " , count ->" + count + "，before ->" + before);
                 if (start == 0 && count > 0) {
+                	/*
+                	    这个地方做长度的监测
+                	 */
                 }
             }
             @Override
@@ -296,6 +286,7 @@ public class ChatActivity extends AppCompatActivity {
         contacts = MyDataHander.getAllUser();
 	    /** 设置对方的卡号为当前第一个人 */
 	    otherId = contacts.get(0).getUserId();
+	    /** 设置聊天名称 */
 	    nameText.setText(contacts.get(0).getUserName());
 
         if (contacts.size() != 0) {
@@ -452,29 +443,6 @@ public class ChatActivity extends AppCompatActivity {
             //保存到数据库里面
             MyDataHander.addMessage(messageInfo);
         });
-    }
-
-    private Animation getVisibleAnim(boolean show, View view) {
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int y = view.getMeasuredHeight() / 4;
-        int x = view.getMeasuredWidth() / 4;
-        if (show) {
-            ScaleAnimation showAnim = new ScaleAnimation(0.01f, 1f, 0.01f, 1f, x, y);
-            showAnim.setDuration(200);
-            return showAnim;
-        } else {
-            ScaleAnimation hiddenAnim = new ScaleAnimation(1f, 0.01f, 1f, 0.01f, x, y);
-            hiddenAnim.setDuration(200);
-            return hiddenAnim;
-        }
-    }
-
-    public void refreshDisplay(String sendMsg) {
-        RecyclerView rv = findViewById(R.id.activity_wechat_chat_rv);
-        MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), Constant.MY_IMAGE, Constant.TYPE_RECEIVER_MSG);
-	    displayMessageData.add(displayMessageData.size(), msgData);
-	    chatadapter.notifyDataSetChanged();
-        rv.scrollToPosition(displayMessageData.size() - 1);
     }
 
 }
