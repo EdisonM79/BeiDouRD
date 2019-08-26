@@ -15,7 +15,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/activity_wechat_contact_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="80dp"
             android:background="@color/colorLightDark"
             android:fitsSystemWindows="true"
             app:contentInsetStart="0dp"
@@ -26,32 +26,30 @@
             <ImageView
                 android:id="@+id/activity_wechat_chat_back"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="start"
+                android:layout_margin="15dp"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
-                android:paddingLeft="5dp"
+                android:padding="10dp"
                 android:src="@drawable/back" />
 
             <TextView
                 android:id="@+id/activity_wechat_chat_tv_name1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
                 android:text="联系人"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/content_text_normal" />
+                android:textSize="28sp" />
 
 
             <ImageView
                 android:id="@+id/addContact"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:clickable="true"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:paddingBottom="3dp"
+                android:padding="15dp"
                 android:src="@drawable/add"
                 tools:layout_editor_absoluteX="538dp"
                 tools:layout_editor_absoluteY="8dp" />
@@ -81,7 +79,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/activity_wechat_chat_toolbar"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="80dp"
             android:background="@color/colorLightDark"
             android:fitsSystemWindows="true"
             app:contentInsetStart="0dp"
@@ -100,22 +98,20 @@
                 android:id="@+id/activity_wechat_chat_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_img"
                 android:text="@string/NA"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/content_text_normal" />
+                android:textSize="28sp"
+                tools:layout_editor_absoluteX="21dp"
+                tools:layout_editor_absoluteY="28dp" />
 
 
             <ImageView
                 android:id="@+id/activity_wechat_chat_profile"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:background="?selectableItemBackground"
-                android:clickable="true"
-                android:paddingLeft="3dp"
-                android:paddingRight="15dp"
-                android:paddingBottom="3dp"
+                android:padding="20dp"
                 android:src="@drawable/profile_info"
                 tools:layout_editor_absoluteX="538dp"
                 tools:layout_editor_absoluteY="8dp" />
@@ -160,17 +156,17 @@
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
                 android:layout_weight="1">
 
                 <Button
                     android:id="@+id/activity_wechat_chat_btn_send"
-                    android:layout_width="42dp"
-                    android:layout_height="32dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:background="@drawable/send_btn_bg"
                     android:text="@string/send"
-                    android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/content_text_normal" />
 
             </FrameLayout>
 

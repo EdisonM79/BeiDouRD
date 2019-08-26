@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height">
 
@@ -43,9 +44,9 @@
             android:id="@+id/item_wechat_main_tv_username"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin"
             android:layout_weight="1"
             android:text="@string/blank_username"
-            android:layout_marginTop="@dimen/margin"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/content_text_16sp" />
 

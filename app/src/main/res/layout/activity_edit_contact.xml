@@ -12,7 +12,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_wechat_contact_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="80dp"
         android:background="@color/colorLightDark"
         android:fitsSystemWindows="true"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,18 +22,19 @@
         <ImageView
             android:id="@+id/reButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="?selectableItemBackground"
             android:clickable="true"
-            android:paddingLeft="5dp"
+            android:padding="15dp"
             android:src="@drawable/back" />
 
         <TextView
             android:id="@+id/activity_wechat_chat_tv_name1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="50dp"
+            android:gravity="center_vertical"
             android:text="修改联系人"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/content_text_normal" />
@@ -48,64 +49,71 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
-    <ScrollView
-        android:id="@+id/login_form"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="55dp"
-        android:layout_marginRight="50dp"
-        android:paddingBottom="15dp">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
 
-        <LinearLayout
-            android:id="@+id/email_login_form"
+        <ScrollView
+            android:id="@+id/login_form"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="150dp"
-            android:layout_marginRight="150dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/cardId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_card_Id"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/contactName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:hint="@string/prompt_name"
-                    android:imeActionId="6"
-                    android:imeOptions="actionUnspecified"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/button_Add_Contact"
-                style="?android:textAppearanceSmall"
+            <LinearLayout
+                android:id="@+id/email_login_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_message"
-                android:text="@string/activity_edit_contact"
-                android:textStyle="bold" />
+                android:layout_marginLeft="150dp"
+                android:layout_marginRight="150dp"
+                android:orientation="vertical">
 
-        </LinearLayout>
-    </ScrollView>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/cardId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_card_Id"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textSize="@dimen/content_text_normal" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/contactName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:hint="@string/prompt_name"
+                        android:imeActionId="6"
+                        android:imeOptions="actionUnspecified"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textSize="@dimen/content_text_normal" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/button_Add_Contact"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_message"
+                    android:text="@string/activity_edit_contact"
+                    android:textSize="@dimen/content_text_normal"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
 </LinearLayout>

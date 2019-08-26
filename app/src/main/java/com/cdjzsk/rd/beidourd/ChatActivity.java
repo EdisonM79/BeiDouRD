@@ -60,14 +60,14 @@ public class ChatActivity extends AppCompatActivity {
     /** 原始的聊天数据列表*/
     public List<MessageInfo> messageInfos;
 	/** 封装的聊天信息数据*/
-    public List<MsgData> displayMessageData = new ArrayList<MsgData>();
+    public List<MsgData> displayMessageData = new ArrayList<>();
 	 /** 聊天信息适配器*/
     private ChatAdapter chatadapter;
 
 	/** 数据库联系人列表 */
 	public List<User> contacts;
 	/** 封装后联系人列表*/
-	List<ContactShowInfo> contactShowInfo = new ArrayList<ContactShowInfo>();;
+	List<ContactShowInfo> contactShowInfo = new ArrayList<>();
 	/** 联系人适配器 */
 	ContactAdapter contactAdapter;
 
@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wechat_chat);
-	    nameText = (TextView) findViewById(R.id.activity_wechat_chat_tv_name);
+	    nameText = findViewById(R.id.activity_wechat_chat_tv_name);
 
 	    Intent intent = getIntent();
 	    myId = intent.getStringExtra("myId");
@@ -87,9 +87,9 @@ public class ChatActivity extends AppCompatActivity {
 		}
 
 		/** 添加用户的按钮 */
-	    addContact = (ImageView) findViewById(R.id.addContact);
+	    addContact = findViewById(R.id.addContact);
 	    /** 编辑用户的按钮 */
-	    editContact = (ImageView) findViewById(R.id.activity_wechat_chat_profile);
+	    editContact = findViewById(R.id.activity_wechat_chat_profile);
 	    //编辑用户按钮点击事件
 	    editContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -190,9 +190,9 @@ public class ChatActivity extends AppCompatActivity {
 					int listLength = contactShowInfo.size();
 					boolean isHave = false;
 					for (int i = 0; i < listLength ; i++) {
-						String have = contactShowInfo.get(i).getCardId();
+						Integer have = Integer.valueOf(contactShowInfo.get(i).getCardId());
 						//联系人列表里面存在有当前消息发送人
-						if (have.equals(userId)) {
+						if (have.equals(Integer.valueOf(userId))) {
 							isHave = true;
 							//更新最后消息和最后时间
 							ContactShowInfo exchange = contactShowInfo.get(i);
@@ -217,7 +217,7 @@ public class ChatActivity extends AppCompatActivity {
 
 					/************更新对话信息*************/
 					//来信人正好为当前联系人,则更新界面，否则不更新
-					if (otherId.equals(userId)) {
+					if (Integer.valueOf(otherId).equals(Integer.valueOf(userId))) {
 						//Java中String类型转换成数据库中的日期类型，添加到数据库
 						//创建sdf对象，指定日期格式类型
 						SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -256,7 +256,12 @@ public class ChatActivity extends AppCompatActivity {
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
-	    iv_back.setOnClickListener((v) -> finish());
+	    iv_back.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    finish();
+		    }
+	    });
 	    /**  聊天内容显示界面*/
         RecyclerView rv = findViewById(R.id.activity_wechat_chat_rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -284,12 +289,13 @@ public class ChatActivity extends AppCompatActivity {
 
         /** 数据库中取出所有的联系人 */
         contacts = MyDataHander.getAllUser();
-	    /** 设置对方的卡号为当前第一个人 */
-	    otherId = contacts.get(0).getUserId();
-	    /** 设置聊天名称 */
-	    nameText.setText(contacts.get(0).getUserName());
 
         if (contacts.size() != 0) {
+
+	        /** 设置对方的卡号为当前第一个人 */
+	        otherId = contacts.get(0).getUserId();
+	        /** 设置聊天名称 */
+	        nameText.setText(contacts.get(0).getUserName());
 	        for (int i = 0; i < contacts.size(); i++) {
 		        String contactId = contacts.get(i).getUserId();
 		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId( myId, contactId);
@@ -304,7 +310,7 @@ public class ChatActivity extends AppCompatActivity {
 			        //最后一次消息时间
 			        csi.setLastMsgTime(messageInfo.getTime());
 			        //消息是否已读
-			        Boolean isRead = (messageInfo.getRead()).equals("1")?true:false;
+			        Boolean isRead = (messageInfo.getRead()).equals("1");
 			        csi.setRead(isRead);
 		        }
 		        //联系人昵称
