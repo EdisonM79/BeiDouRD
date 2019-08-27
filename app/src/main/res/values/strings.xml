@@ -35,4 +35,7 @@
     <string name="error_data_exist">此用户卡号或昵称已存在</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_edit_contact">editContactActivity</string>
+
+    <drawable name="read_normal">#e6a186</drawable>
+    <drawable name="read_pressed">#da724a</drawable>
 </resources>

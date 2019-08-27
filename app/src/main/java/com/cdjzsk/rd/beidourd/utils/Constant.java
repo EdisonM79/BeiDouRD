@@ -27,7 +27,9 @@ public class Constant {
 	/** 时间戳标志*/
 	public final static int TYPE_TIME_STAMP = 0x23;
 	/** 我的聊天头像*/
-	public final static int MY_IMAGE = R.drawable.hdimg_4;
+	public final static int MY_IMAGE = R.drawable.icon_d;
 	/** 其他人聊天头像*/
 	public final static int OTHER_IMAGE = R.drawable.icon_d;
+	/** 消息发送成功标志*/
+	public final static String MESSAGE_SEND_SUCCESS = "Y";
 }

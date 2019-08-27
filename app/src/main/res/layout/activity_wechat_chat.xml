@@ -32,7 +32,7 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:padding="10dp"
-                android:src="@drawable/back" />
+                android:src="@drawable/ic_action_back" />
 
             <TextView
                 android:id="@+id/activity_wechat_chat_tv_name1"
@@ -164,6 +164,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:background="@drawable/send_btn_bg"
+                    android:gravity="center_vertical|center_horizontal"
                     android:text="@string/send"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/content_text_normal" />

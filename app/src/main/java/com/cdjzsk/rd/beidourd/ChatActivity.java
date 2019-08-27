@@ -1,7 +1,9 @@
 package com.cdjzsk.rd.beidourd;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cdjzsk.rd.beidourd.adapter.ChatAdapter;
 import com.cdjzsk.rd.beidourd.adapter.ContactAdapter;
@@ -70,6 +73,8 @@ public class ChatActivity extends AppCompatActivity {
 	List<ContactShowInfo> contactShowInfo = new ArrayList<>();
 	/** 联系人适配器 */
 	ContactAdapter contactAdapter;
+	/** 发送倒计时器 */
+	public TimeCount timeCount;
 
 
     @Override
@@ -136,7 +141,9 @@ public class ChatActivity extends AppCompatActivity {
 				//发送状态反馈
 				if(msg.contains("BDFKI"))
 				{
+
 					String[]  result = msg.split(",");
+					sendMassageState(result[2],result[3]);
 				}
 				/**
 				 *  在聊天页面接收到消息需要3重处理
@@ -248,12 +255,29 @@ public class ChatActivity extends AppCompatActivity {
 		});
 	}
 
+	/**
+	 * 消息发送状态
+	 * @param state1
+	 * @param state2
+	 */
+	public void sendMassageState(String state1, String state2) {
+
+		if (Constant.MESSAGE_SEND_SUCCESS.equals(state1)) {
+			Toast.makeText(this, "消息发送成功", Toast.LENGTH_SHORT).show();
+			//消息发送成功，倒计时开始
+			timeCount.start();
+		} else {
+			Toast.makeText(this, "消息发送失败", Toast.LENGTH_SHORT).show();
+		}
+	}
     private void initComponents() {
 
     	/**  显示聊天对象的姓名*/
         TextView tv_userName = findViewById(R.id.activity_wechat_chat_tv_name);
 	    /**  发送信息按钮*/
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
+		/** 给发送按钮设置发送倒计时 */
+	    timeCount = new TimeCount(60000,1000,btn_send);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
 	    iv_back.setOnClickListener(new View.OnClickListener() {
@@ -310,7 +334,7 @@ public class ChatActivity extends AppCompatActivity {
 			        //最后一次消息时间
 			        csi.setLastMsgTime(messageInfo.getTime());
 			        //消息是否已读
-			        Boolean isRead = (messageInfo.getRead()).equals("1");
+			        Boolean isRead = (messageInfo.getRead()).equals(Constant.MESSAGE_READ);
 			        csi.setRead(isRead);
 		        }
 		        //联系人昵称
@@ -322,6 +346,9 @@ public class ChatActivity extends AppCompatActivity {
 	        contactListView = findViewById(R.id.activity_wechat_lv);
 	        //给联系人列表UI设置适配器和数据
 	        contactListView.setAdapter(contactAdapter);
+	        /**
+	         * 设置联系人列表单项点击事件
+	         */
 	        contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		        @Override
 		        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -335,7 +362,7 @@ public class ChatActivity extends AppCompatActivity {
 			        //从数据库中消息数据
 			        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(myId, otherId);
 			        if (null != messageInfos) {
-				        //将这20条数据设置为已读
+				        //将数据设置为已读
 				        int length = messageInfos.size();
 				        for (int j = 0; j < length; j++) {
 					        MyDataHander.updateReadStateByMessageId(Constant.MESSAGE_READ, messageInfos.get(j).getId());
@@ -370,13 +397,15 @@ public class ChatActivity extends AppCompatActivity {
 			        }
 			        chatadapter.notifyDataSetChanged();
 			        rv.scrollToPosition(displayMessageData.size() - 1);
+
+			        //取消选项的小红点
+			        contactShowInfo.get(i).setRead(true);
+			        contactAdapter.notifyDataSetChanged();
 		        }
 	        });
 
 
 	        /** 数据库中取出20条最新的消息数据 */
-	        //从数据库中取出20条最新的消息数据
-	        //messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(otherId,0,20);
 	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(myId,otherId);
 	        displayMessageData = new ArrayList<>();
 	        if (null != messageInfos) {
@@ -450,5 +479,31 @@ public class ChatActivity extends AppCompatActivity {
             MyDataHander.addMessage(messageInfo);
         });
     }
+	/**
+	 * 内部类-用于给按钮设置定时
+	 */
+	class TimeCount extends CountDownTimer {
 
+		private Button button;
+
+		public TimeCount(long millisInFuture, long countDownInterval, Button button) {
+			super(millisInFuture, countDownInterval);
+			this.button = button;
+		}
+		@Override
+		public void onTick(long millisUntilFinished) {
+			//this.button.setBackgroundColor(Color.parseColor("#B6B6D8"));
+			this.button.setClickable(false);
+			this.button.setText("("+millisUntilFinished / 1000 +") ");
+			this.button.setTextColor(Color.parseColor("#ff0000"));
+			//this.button.setTextColor(getResources().getColor(R.color.sendBan));
+		}
+		@Override
+		public void onFinish() {
+			this.button.setText("发送");
+			this.button.setClickable(true);
+			this.button.setTextColor(Color.parseColor("#ffffff"));
+			//this.button.setTextColor(getResources().getColor(R.color.sendOk));
+		}
+	}
 }

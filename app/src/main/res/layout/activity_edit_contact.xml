@@ -27,7 +27,7 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:padding="15dp"
-            android:src="@drawable/back" />
+            android:src="@drawable/ic_action_back" />
 
         <TextView
             android:id="@+id/activity_wechat_chat_tv_name1"

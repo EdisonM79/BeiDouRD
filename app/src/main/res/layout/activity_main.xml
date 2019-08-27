@@ -80,7 +80,7 @@
                 android:id="@+id/readButton"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:background="@drawable/background_read"
+                android:background="@drawable/read_button_selector"
                 android:text="读卡"
                 android:textSize="@dimen/content_text_normal" />
 

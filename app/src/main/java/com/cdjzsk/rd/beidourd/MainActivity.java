@@ -10,6 +10,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.MessageInfo;
@@ -36,6 +37,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = LogUtils.makeTag(MainActivity.class);
+	//记录用户首次点击返回键的时间
+	private long firstTime = 0;
 
 	@BindView(R.id.card_id)
 	TextView cardId;
@@ -64,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -79,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
 		//点击读卡按钮，发送读卡指令，打开波束功率输出
 		readButton.setOnClickListener((View view) -> {
 			if (Constant.TEST_UI_MODEL) {
+				cardId.setText("");
+				frequency.setText("");
 				//发送读卡指令
 				SerialPortUtils.sendControl(Constant.ICA);
 				//发送打开波束功率输出指令
@@ -102,6 +106,18 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		initHistogram();
+	}
+
+	@Override
+	public void onBackPressed() {
+		long secondTime = System.currentTimeMillis();
+		if (secondTime - firstTime > 2000) {
+			Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+			firstTime = secondTime;
+		} else{
+			finish();
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -271,6 +287,17 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
+		SerialPortUtils.exchangeListener(new MessageListener() {
+			@Override
+			public void processMessage(BaseMessage msg) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						updataUI(msg.toString());
+					}
+				});
+			}
+		});
 		if (Constant.TEST_UI_MODEL) {
 			//发送读卡指令
 			SerialPortUtils.sendControl(Constant.ICA);

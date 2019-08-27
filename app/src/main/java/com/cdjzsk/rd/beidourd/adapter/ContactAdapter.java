@@ -57,8 +57,10 @@ public class ContactAdapter extends ArrayAdapter {
         vh.mute.setVisibility(View.GONE);
 
         if (contactInfo.isRead()) {
+            //isRead为true的时候，不显示红点
             vh.badge.setVisibility(View.GONE);
         } else {
+            //isRead为false的时候，显示小红点
             vh.badge.setVisibility(View.VISIBLE);
         }
 
