@@ -75,7 +75,8 @@ public class ChatActivity extends AppCompatActivity {
 	ContactAdapter contactAdapter;
 	/** 发送倒计时器 */
 	public TimeCount timeCount;
-
+	/**  聊天内容显示界面*/
+	RecyclerView rv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -249,6 +250,7 @@ public class ChatActivity extends AppCompatActivity {
 						msgData.setProfile_res(Constant.OTHER_IMAGE);
 						displayMessageData.add(displayMessageData.size(), msgData);
 						chatadapter.notifyDataSetChanged();
+						rv.scrollToPosition(displayMessageData.size() - 1);
 					}
 				}
 			}
@@ -287,7 +289,7 @@ public class ChatActivity extends AppCompatActivity {
 		    }
 	    });
 	    /**  聊天内容显示界面*/
-        RecyclerView rv = findViewById(R.id.activity_wechat_chat_rv);
+        rv = findViewById(R.id.activity_wechat_chat_rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
 	    /**  聊天内容编辑*/
 	    EditText et_msg = findViewById(R.id.activity_wechat_chat_et_msg);

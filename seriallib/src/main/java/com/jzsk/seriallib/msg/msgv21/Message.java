@@ -5,6 +5,7 @@ import com.jzsk.seriallib.msg.BaseMessage;
 import com.jzsk.seriallib.msg.BasePacket;
 import com.jzsk.seriallib.util.ArrayUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 /**
@@ -71,6 +72,11 @@ public class Message extends BaseMessage {
 		/*return new StringBuilder("{ ").append(new String(mBody))
 				.append(" }").toString();*/
 		/** 2019/02/26 去掉了消息体两边的括号 */
+		try {
+			return new String(mBody,"GB2312");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return new String(mBody);
 	}
 

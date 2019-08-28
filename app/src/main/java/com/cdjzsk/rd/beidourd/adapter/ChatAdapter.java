@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.cdjzsk.rd.beidourd.R;
 import com.cdjzsk.rd.beidourd.bean.MsgData;
 import com.cdjzsk.rd.beidourd.utils.Constant;
-import com.cdjzsk.rd.beidourd.utils.HelpUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -70,11 +70,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MsgViewHolder>
 
     private void initTimeStamp(MsgViewHolder holder, MsgData currentMsgData, MsgData preMsgData) {
         String showTime;
-        if (preMsgData == null) {
+/*        if (preMsgData == null) {
             showTime = HelpUtils.calculateShowTime(HelpUtils.getCurrentMillisTime(), currentMsgData.getTimeStamp());
         } else {
             showTime = HelpUtils.calculateShowTime(currentMsgData.getTimeStamp(), preMsgData.getTimeStamp());
-        }
+        }*/
+        /** 设置为直接显示每条消息的发送时间 */
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd E HH:mm");
+        showTime = "20"+ format.format(currentMsgData.getTimeStamp());
+
         if (showTime != null) {
             holder.timeStamp.setVisibility(View.VISIBLE);
             holder.timeStamp.setText(showTime);

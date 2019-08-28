@@ -10,6 +10,7 @@ import java.util.List;
 public class ListUtils {
 
   /**
+   * 将包装器列表转换为基元数组。Byte-->byte
    * Converts a list of wrappers to an array of primitives.
    * <p>
    * Any unspecified element will be ignored.

@@ -94,6 +94,11 @@ public class ArrayUtils {
     return true;
   }
 
+  /**
+   * 连接byte数组
+   * @param parts
+   * @return
+   */
   public static byte[] concatenate(byte[]... parts) {
     List<Byte> result = new LinkedList<>();
 
