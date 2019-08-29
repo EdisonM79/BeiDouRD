@@ -287,18 +287,20 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
-		SerialPortUtils.exchangeListener(new MessageListener() {
-			@Override
-			public void processMessage(BaseMessage msg) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						updataUI(msg.toString());
-					}
-				});
-			}
-		});
+
 		if (Constant.TEST_UI_MODEL) {
+			//重新设置监听器
+			SerialPortUtils.exchangeListener(new MessageListener() {
+				@Override
+				public void processMessage(BaseMessage msg) {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							updataUI(msg.toString());
+						}
+					});
+				}
+			});
 			//发送读卡指令
 			SerialPortUtils.sendControl(Constant.ICA);
 			//发送打开波束功率输出指令

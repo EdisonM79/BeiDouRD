@@ -348,6 +348,7 @@ public class ChatActivity extends AppCompatActivity {
 	        contactListView = findViewById(R.id.activity_wechat_lv);
 	        //给联系人列表UI设置适配器和数据
 	        contactListView.setAdapter(contactAdapter);
+
 	        /**
 	         * 设置联系人列表单项点击事件
 	         */

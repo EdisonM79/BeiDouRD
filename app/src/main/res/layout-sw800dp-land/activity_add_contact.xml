@@ -12,7 +12,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_wechat_contact_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_top_bar_width_small"
+        android:layout_height="@dimen/activity_top_bar_width"
         android:background="@color/colorLightDark"
         android:fitsSystemWindows="true"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,11 +22,11 @@
         <ImageView
             android:id="@+id/reButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="?selectableItemBackground"
             android:clickable="true"
-            android:padding="15dp"
+            android:padding="20dp"
             android:src="@drawable/ic_action_back" />
 
         <TextView
@@ -37,7 +37,7 @@
             android:gravity="center_vertical"
             android:text="添加联系人"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/content_text_normal_small" />
+            android:textSize="@dimen/content_text_normal" />
 
 
     </android.support.v7.widget.Toolbar>
@@ -58,14 +58,14 @@
         <ScrollView
             android:id="@+id/login_form"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="400dp">
 
             <LinearLayout
                 android:id="@+id/email_login_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="150dp"
-                android:layout_marginRight="150dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="200dp"
+                android:layout_marginRight="200dp"
                 android:orientation="vertical">
 
                 <android.support.design.widget.TextInputLayout
@@ -75,11 +75,11 @@
                     <EditText
                         android:id="@+id/cardId"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="100dp"
                         android:hint="@string/prompt_card_Id"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/content_text_normal_small" />
+                        android:textSize="@dimen/content_text_normal" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -90,15 +90,15 @@
                     <EditText
                         android:id="@+id/contactName"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginBottom="50dp"
                         android:hint="@string/prompt_name"
                         android:imeActionId="6"
                         android:imeOptions="actionUnspecified"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/content_text_normal_small" />
+                        android:textSize="@dimen/content_text_normal" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -106,10 +106,10 @@
                     android:id="@+id/button_Add_Contact"
                     style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:background="@drawable/background_message"
                     android:text="@string/title_activity_add_contact"
-                    android:textSize="@dimen/content_text_normal_small"
+                    android:textSize="@dimen/content_text_normal"
                     android:textStyle="bold" />
 
             </LinearLayout>

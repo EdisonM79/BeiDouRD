@@ -12,7 +12,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_wechat_contact_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="@dimen/activity_top_bar_width_small"
         android:background="@color/colorLightDark"
         android:fitsSystemWindows="true"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -31,13 +31,13 @@
 
         <TextView
             android:id="@+id/activity_wechat_chat_tv_name1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="50dp"
             android:gravity="center_vertical"
             android:text="修改联系人"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/content_text_normal" />
+            android:textSize="@dimen/content_text_normal_small" />
 
 
     </android.support.v7.widget.Toolbar>
@@ -79,7 +79,7 @@
                         android:hint="@string/prompt_card_Id"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/content_text_normal" />
+                        android:textSize="@dimen/content_text_normal_small" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +98,7 @@
                         android:imeOptions="actionUnspecified"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/content_text_normal" />
+                        android:textSize="@dimen/content_text_normal_small" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/background_message"
                     android:text="@string/activity_edit_contact"
-                    android:textSize="@dimen/content_text_normal"
+                    android:textSize="@dimen/content_text_normal_small"
                     android:textStyle="bold" />
 
             </LinearLayout>
