@@ -28,6 +28,7 @@
     <string name="prompt_name">昵称</string>
     <string name="add_contact">添加联系人</string>
     <string name="edit_contact">修改联系人</string>
+    <string name="edit_delete">删除联系人</string>
     <string name="error_invalid_user_id">请填写正确的用户卡号</string>
     <string name="error_invalid_contact_name">请填入联系人的昵称</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -36,6 +37,4 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_edit_contact">editContactActivity</string>
 
-    <drawable name="read_normal">#e6a186</drawable>
-    <drawable name="read_pressed">#da724a</drawable>
 </resources>

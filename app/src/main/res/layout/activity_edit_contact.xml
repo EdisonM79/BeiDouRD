@@ -26,7 +26,6 @@
             android:layout_gravity="start"
             android:background="?selectableItemBackground"
             android:clickable="true"
-            android:padding="15dp"
             android:src="@drawable/ic_action_back" />
 
         <TextView
@@ -102,15 +101,32 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <Button
-                    android:id="@+id/button_Add_Contact"
-                    style="?android:textAppearanceSmall"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/background_message"
-                    android:text="@string/activity_edit_contact"
-                    android:textSize="@dimen/content_text_normal_small"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/button_Add_Contact"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_message"
+                        android:text="@string/activity_edit_contact"
+                        android:textSize="@dimen/content_text_normal_small"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <Button
+                        android:id="@+id/button_Add_Contact2"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_message"
+                        android:text="@string/edit_delete"
+                        android:textSize="@dimen/content_text_normal_small"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>

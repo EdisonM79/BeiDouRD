@@ -24,4 +24,10 @@
     <color name="colorContactBackground">#e5e4e5</color>
     <color name="colorContactOnclickBackground">#c4c4c5</color>
 
+    <color name="read_normal">#e6a186</color>
+    <color name="read_pressed">#da724a</color>
+    <color name="message_normal">#00b0fd</color>
+    <color name="message_pressed">#1E90FF</color>
+    <color name="SOS_normal">#ff4043</color>
+    <color name="SOS_pressed">#ff0000</color>
 </resources>

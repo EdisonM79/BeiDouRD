@@ -1,5 +1,8 @@
 package com.cdjzsk.rd.beidourd.data.entity;
 
+/**
+ * 用于数据库进行消息的存取
+ */
 public class MessageInfo {
 	private Integer id;
 	private String sendId;

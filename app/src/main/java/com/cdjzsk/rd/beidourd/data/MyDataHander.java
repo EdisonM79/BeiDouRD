@@ -41,8 +41,8 @@ public class MyDataHander {
 	 * @return
 	 */
 	public static boolean isUserExit(String userId) {
-		int count = 0;
 
+		int count = 0;
 		SQLiteDatabase db = null;
 		Cursor cursor = null;
 

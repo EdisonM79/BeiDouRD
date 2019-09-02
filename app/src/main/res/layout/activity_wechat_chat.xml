@@ -28,6 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
+                android:layout_marginLeft="5dp"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:src="@drawable/ic_action_back" />
@@ -36,6 +37,7 @@
                 android:id="@+id/activity_wechat_chat_tv_name1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="51dp"
                 android:text="联系人"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/content_text_normal_small" />
@@ -46,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
+                android:layout_marginRight="5dp"
                 android:clickable="true"
                 android:src="@drawable/add"
                 tools:layout_editor_absoluteX="538dp"
@@ -108,12 +111,11 @@
                 android:id="@+id/activity_wechat_chat_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:layout_margin="5dp"
+                android:layout_gravity="end"
+                android:layout_margin="15dp"
                 android:background="?selectableItemBackground"
                 android:src="@drawable/profile_info"
-                tools:layout_editor_absoluteX="538dp"
-                tools:layout_editor_absoluteY="8dp" />
+                tools:layout_editor_absoluteX="371dp" />
 
 
         </android.support.v7.widget.Toolbar>

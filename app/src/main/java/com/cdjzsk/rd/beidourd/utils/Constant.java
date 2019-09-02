@@ -5,7 +5,7 @@ import com.cdjzsk.rd.beidourd.R;
 public class Constant {
 
 	/** false时为测试模式 */
-	public static final boolean TEST_UI_MODEL = false;
+	public static final boolean TEST_UI_MODEL = true;
 	/** 读卡指令*/
 	public static final String ICA = "CCICA,0,00";
 	/** 打开波束功率*/

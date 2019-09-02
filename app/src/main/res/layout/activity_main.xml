@@ -39,7 +39,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:gravity="center_vertical"
-                    android:text="0412159"
                     android:textSize="@dimen/content_text_normal_small" />
 
                 <TextView
@@ -55,7 +54,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:gravity="center_vertical"
-                    android:text="60"
                     android:textSize="@dimen/content_text_normal_small" />
 
             </LinearLayout>
@@ -76,7 +74,7 @@
                 android:id="@+id/readButton"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/read_button_selector"
+                android:background="@drawable/background_read"
                 android:text="读卡"
                 android:textSize="@dimen/content_text_normal_small" />
 
