@@ -284,11 +284,26 @@ public class MyDataHander {
 		db.update("message",values,"id=?",new String[]{messageId.toString()});
 	}
 
+	/**
+	 * 更新联系人
+	 * @param userId
+	 * @param userName
+	 */
 	public static void updateContactById(String userId, String userName) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put("userName", userName);
 		db.update("user",values,"id=?",new String[]{userId});
+	}
+
+	/**
+	 * 通过联系人Id去删除联系人
+	 * @param userId
+	 */
+	public static void deleteContactById(String userId) {
+
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		db.delete("user","id=?",new String[]{userId});
 	}
 
 }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 import com.cdjzsk.rd.beidourd.data.entity.User;
+import com.cdjzsk.rd.beidourd.utils.Constant;
 
 /**
  * A login screen that offers login via email/password.
@@ -231,7 +232,7 @@ public class AddContactActivity extends AppCompatActivity  {
 				User user = new User();
 				user.setUserId(id);
 				user.setUserName(name);
-				user.setImage(R.drawable.hdimg_1);
+				user.setImage(Constant.OTHER_IMAGE);
 				MyDataHander.addUser(user);
 
 				Thread.sleep(500);

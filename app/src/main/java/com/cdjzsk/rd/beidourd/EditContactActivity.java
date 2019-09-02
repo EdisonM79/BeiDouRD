@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cdjzsk.rd.beidourd.data.MyDataHander;
 
@@ -69,8 +70,21 @@ public class EditContactActivity extends AppCompatActivity {
 			}
 		});
 
+		Button del_Contact = findViewById(R.id.button_del_Contact);
+		del_Contact.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				String id = cardId.getText().toString();
+				String name = contactName.getText().toString();
+				MyDataHander.deleteContactById(id);
+				String Context = "用户"+id+"删除成功!";
+				Toast.makeText(EditContactActivity.this, Context, Toast.LENGTH_SHORT).show();
+				finish();
+			}
+		});
+
 		/** 注册按钮的监听器 */
-		Button mEmailSignInButton = (Button) findViewById(R.id.button_Add_Contact);
+		Button mEmailSignInButton = findViewById(R.id.button_Add_Contact);
 		mEmailSignInButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -80,7 +94,6 @@ public class EditContactActivity extends AppCompatActivity {
 		mLoginFormView = findViewById(R.id.login_form);
 		mProgressView = findViewById(R.id.login_progress);
 	}
-
 
 	/**
 	 * 尝试注册

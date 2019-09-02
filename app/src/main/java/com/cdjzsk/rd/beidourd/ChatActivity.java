@@ -116,6 +116,13 @@ public class ChatActivity extends AppCompatActivity {
 		    }
 	    });
     }
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		updateContactList();
+	}
+
 	/**
 	 * 初始化串口工具，设置串口监听类
 	 */
@@ -532,8 +539,9 @@ public class ChatActivity extends AppCompatActivity {
 				csi.setUsername(contacts.get(i).getUserName());
 				contactShowInfo.add(csi);
 			}
+
 			//通知适配器更新
-			chatadapter.notifyDataSetChanged();
+			contactAdapter.notifyDataSetChanged();
 		}
 	}
 
