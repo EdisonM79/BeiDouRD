@@ -8,7 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -49,13 +51,15 @@ public class ChatActivity extends AppCompatActivity {
 
 
 	/** 名称显示 */
-	TextView nameText;
+	private TextView nameText;
 	/** 添加联系人*/
-	ImageView addContact;
+	private ImageView addContact;
 	/** 查看和修改联系人*/
-	ImageView editContact;
+	private ImageView editContact;
 	/** 联系人ListView */
-	ListView contactListView;
+	private ListView contactListView;
+	/** 搜索框 */
+	private SearchView searchView;
 	/** 聊天对方的Id*/
     private String otherId;
     /**本机的卡号Id*/
@@ -66,7 +70,6 @@ public class ChatActivity extends AppCompatActivity {
     public List<MsgData> displayMessageData = new ArrayList<>();
 	 /** 聊天信息适配器*/
     private ChatAdapter chatadapter;
-
 	/** 数据库联系人列表 */
 	public List<User> contacts;
 	/** 封装后联系人列表*/
@@ -86,11 +89,41 @@ public class ChatActivity extends AppCompatActivity {
 
 	    Intent intent = getIntent();
 	    myId = intent.getStringExtra("myId");
+	    //获取联系人列表UI
+	    contactListView = findViewById(R.id.activity_wechat_lv);
 
 		if (Constant.TEST_UI_MODEL) {
 			initComponents();
 			initSerialClient();
 		}
+		//启动自动过滤
+		contactListView.setTextFilterEnabled(true);
+
+	    searchView = findViewById(R.id.searchView);
+	    //显示搜索按钮
+	    searchView.setSubmitButtonEnabled(true);
+	    //默认提示文本
+	    searchView.setQueryHint("查找联系人");
+
+	    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+		    @Override
+		    public boolean onQueryTextSubmit(String s) {
+			    return false;
+		    }
+
+		    @Override
+		    public boolean onQueryTextChange(String s) {
+			    if (TextUtils.isEmpty(s)){
+				    contactListView.clearTextFilter();
+				    contactAdapter.getFilter().filter("");
+			    }
+			    else {
+				    contactAdapter.getFilter().filter(s);
+			    }
+			    return true;
+		    }
+	    });
+
 
 		/** 添加用户的按钮 */
 	    addContact = findViewById(R.id.addContact);
@@ -200,6 +233,7 @@ public class ChatActivity extends AppCompatActivity {
 	    timeCount = new TimeCount(60000,1000,btn_send);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
+
 	    iv_back.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
@@ -231,8 +265,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-	    //获取联系人列表UI
-	    contactListView = findViewById(R.id.activity_wechat_lv);
+
 	    /**
 	     * 发送按钮点击事情
 	     */
