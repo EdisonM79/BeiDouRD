@@ -370,7 +370,7 @@ public class ChatActivity extends AppCompatActivity {
 	        nameText.setText(contacts.get(0).getUserName());
 	        for (int i = 0; i < contacts.size(); i++) {
 		        String contactId = contacts.get(i).getUserId();
-		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId( myId, contactId);
+		        MessageInfo messageInfo = MyDataHander.getContactShowInfoByCardId(myId, contactId);
 		        ContactShowInfo csi = new ContactShowInfo();
 		        //联系人卡号
 		        csi.setCardId(contactId);
@@ -389,8 +389,9 @@ public class ChatActivity extends AppCompatActivity {
 		        csi.setUsername(contacts.get(i).getUserName());
 		        contactShowInfo.add(csi);
 	        }
-	        contactAdapter = new ContactAdapter(this, R.layout.item_wechat_main, contactShowInfo);
+        }
 	        //给联系人列表UI设置适配器和数据
+	        contactAdapter = new ContactAdapter(this, R.layout.item_wechat_main, contactShowInfo);
 	        contactListView.setAdapter(contactAdapter);
 	        /** 数据库中取出消息数据 */
 	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(myId,otherId);
@@ -431,7 +432,6 @@ public class ChatActivity extends AppCompatActivity {
 	        chatadapter = new ChatAdapter(this, displayMessageData);
 	        rv.setAdapter(chatadapter);
 	        rv.scrollToPosition(displayMessageData.size() - 1);
-        }
     }
 
 	/**

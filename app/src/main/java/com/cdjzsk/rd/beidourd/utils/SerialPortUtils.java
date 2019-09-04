@@ -1,5 +1,6 @@
 package com.cdjzsk.rd.beidourd.utils;
 
+
 import android.support.annotation.NonNull;
 
 import com.jzsk.seriallib.ClientStateCallback;
@@ -58,7 +59,11 @@ public class SerialPortUtils implements ClientStateCallback {
 		byte[] sendMsgToSerial = ArrayUtils.concatenate(
 				new byte[]{'$'}, send, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(send)}).getBytes(), new byte[]{0x0D, 0x0A});
 		com.jzsk.seriallib.msg.msgv21.Message msg = new com.jzsk.seriallib.msg.msgv21.Message(sendMsgToSerial);
-		mSerialClient.sendMessage(msg);
+		try {
+			mSerialClient.sendMessage(msg);
+		} catch (IllegalStateException e) {
+			throw e;
+		}
 	}
 
 	/**
@@ -70,7 +75,11 @@ public class SerialPortUtils implements ClientStateCallback {
 		byte[] byteMessage = message.getBytes();
 		byte[] sendMsgICA = ArrayUtils.concatenate(new byte[]{'$'}, byteMessage, new byte[]{'*'}, ArrayUtils.bytesToHexString(new byte[]{ArrayUtils.xorCheck(byteMessage)}).getBytes(), new byte[]{0x0D, 0x0A});
 		Message msgICA = new Message(sendMsgICA);
-		mSerialClient.sendMessage(msgICA);
+		try {
+			mSerialClient.sendMessage(msgICA);
+		} catch (IllegalStateException e) {
+			throw e;
+		}
 	}
 
 	@Override

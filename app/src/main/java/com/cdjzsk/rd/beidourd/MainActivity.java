@@ -1,5 +1,7 @@
 package com.cdjzsk.rd.beidourd;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 	Button messageButton;
 	@BindView(R.id.sosButton)
 	Button sosButton;
+	private AlertDialog.Builder builder;
+	private AlertDialog alertDialog;
 
 	/** 水平监听器 */
 	private OrientationEventListener orientationEventListener;
@@ -68,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
 
+		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		if (Constant.TEST_UI_MODEL) {
 			//初始化串口
@@ -99,11 +103,14 @@ public class MainActivity extends AppCompatActivity {
 			startActivity(intent);
 
 		});
+		messageButton.setClickable(false);
 		//点击SOS按钮，暂时不做处理
 		sosButton.setOnClickListener((View view) -> {
 			Log.d("SOS", "Click SOS Button");
 			System.out.println("this is lambda");
+			Toast.makeText(this, "SOS功能已触发!",Toast.LENGTH_SHORT);
 		});
+		sosButton.setClickable(false);
 
 		initHistogram();
 	}
@@ -223,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
 					String freqy = msgList[5];
 					cardId.setText(mCardId);
 					frequency.setText(freqy);
+					messageButton.setClickable(true);
+					sosButton.setClickable(true);
 				}
 				if (msg.contains("BDFKI")) {
 					String[] result = msg.split(",");
@@ -301,10 +310,29 @@ public class MainActivity extends AppCompatActivity {
 					});
 				}
 			});
-			//发送读卡指令
-			SerialPortUtils.sendControl(Constant.ICA);
-			//发送打开波束功率输出指令
-			SerialPortUtils.sendControl(Constant.OPEN_BSI);
+
+			AlertDialog dialog = new AlertDialog.Builder(this).create();//创建对话框
+
+			try {
+				//发送读卡指令
+				SerialPortUtils.sendControl(Constant.ICA);
+				//发送打开波束功率输出指令
+				SerialPortUtils.sendControl(Constant.OPEN_BSI);
+			} catch (Exception e) {
+				dialog.setIcon(R.mipmap.ic_launcher);//设置对话框icon
+				dialog.setTitle("系统提示");//设置对话框标题
+				dialog.setMessage("无法连接到北斗短报文模块，程序即将退出！");//设置文字显示内容
+				//分别设置三个button
+				dialog.setButton(DialogInterface.BUTTON_POSITIVE,"退出", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();//关闭对话框
+						finish();
+						System.exit(0);
+					}
+				});
+				dialog.show();//显示对话框
+			}
 		}
 	}
 
@@ -329,4 +357,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
 }
