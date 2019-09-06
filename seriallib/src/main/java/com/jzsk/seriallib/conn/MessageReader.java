@@ -234,9 +234,9 @@ class MessageReader {
 		int mark = 0;
 		int newMark = 0;
 
-		/** 将缓存字节数组的指针设置为数组的开始序列即数组下标0 */
+		/** 将缓冲区设置为读模式 limite = position; position = 0; */
 		cache.flip();
-		/** remaining返回cache剩余的可用长度,循环cache里面的数据*/
+		/** remaining返回cache剩余的可用长度(limit - position),循环cache里面的数据*/
 		while (cache.remaining() > 0) {
 			/** 在此缓冲区的位置设置标记 */
 			cache.mark();
@@ -270,6 +270,7 @@ class MessageReader {
 					int packetLength = pos - newMark;
 					/** 0x0D 0x0A */
 					if (packetLength > 2) {
+						/**position = mark;*/
 						cache.reset();
 						if(newMark - mark > 0) {
 							cache.get(new byte[newMark - mark]);
@@ -295,7 +296,9 @@ class MessageReader {
 						cache.flip();
 					}
 				} else {
+					/** 倒带position = mark */
 					cache.reset();
+					/** position向后进一位 */
 					cache.get();
 				}
 			}
