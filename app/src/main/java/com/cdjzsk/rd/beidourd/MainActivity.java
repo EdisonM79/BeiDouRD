@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
 		sosButton.setClickable(false);
 
 		initHistogram();
+		//在测试模式下，查看博士功率的UI
+		if (Constant.TEST_UI_MODEL) {
+			initMultiGroupHistogramView("$BDBSI,00,00,1,3,2,4,0,3,1,4,2,1*5E");
+		}
 	}
 
 	@Override
