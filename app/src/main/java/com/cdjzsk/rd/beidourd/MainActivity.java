@@ -114,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
 		initHistogram();
 		//在测试模式下，查看波束功率的UI
-		if (Constant.TEST_UI_MODEL) {
-			initMultiGroupHistogramView("$BDBSI,00,00,1,3,2,4,0,3,1,4,2,1*5E");
+		if (!Constant.TEST_UI_MODEL) {
+			initMultiGroupHistogramView("$BDBSI,00,00,1,3,2,4,4,3,1,4,2,1*5E");
 		}
 	}
 

@@ -134,8 +134,11 @@ public class ChatActivity extends AppCompatActivity {
 		    @Override
 		    public void onClick(View view) {
 			    Intent intent = new Intent(ChatActivity.this, EditContactActivity.class);
-			    intent.putExtra("otherId",otherId);
-			    intent.putExtra("otherName",nameText.getText().toString());
+/*			    intent.putExtra("otherId",otherId);
+			    intent.putExtra("otherName",nameText.getText().toString());*/
+				String test = null;
+			    intent.putExtra("otherId",test);
+			    intent.putExtra("otherName",test);
 			    startActivity(intent);
 		    }
 	    });
@@ -225,8 +228,6 @@ public class ChatActivity extends AppCompatActivity {
 	}
     private void initComponents() {
 
-    	/**  显示聊天对象的姓名*/
-        TextView tv_userName = findViewById(R.id.activity_wechat_chat_tv_name);
 	    /**  发送信息按钮*/
         Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
 		/** 给发送按钮设置发送倒计时 */
@@ -363,6 +364,7 @@ public class ChatActivity extends AppCompatActivity {
 
         /** 数据库中取出所有的联系人 */
         contacts = MyDataHander.getAllUser();
+
         if (contacts.size() != 0) {
 	        /** 设置对方的卡号为当前第一个人 */
 	        otherId = contacts.get(0).getUserId();

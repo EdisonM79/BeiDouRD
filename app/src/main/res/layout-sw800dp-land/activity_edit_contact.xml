@@ -91,7 +91,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="50dp"
-                        android:layout_marginBottom="50dp"
+                        android:layout_marginBottom="40dp"
                         android:hint="@string/prompt_name"
                         android:imeActionId="6"
                         android:imeOptions="actionUnspecified"
@@ -101,15 +101,35 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <Button
-                    android:id="@+id/button_Add_Contact"
-                    style="?android:textAppearanceSmall"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:background="@drawable/background_message"
-                    android:text="@string/activity_edit_contact"
-                    android:textSize="@dimen/content_text_normal"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_Add_Contact"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_message"
+                        android:text="@string/activity_edit_contact"
+                        android:textSize="@dimen/content_text_normal"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/button_del_Contact"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/item_margin_left_10dp"
+                        android:layout_marginRight="@dimen/item_margin_left_10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_sos"
+                        android:text="@string/edit_delete"
+                        android:textSize="@dimen/content_text_normal"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>

@@ -157,7 +157,8 @@ public class AddContactActivity extends AppCompatActivity  {
 		//
 		boolean idExist = MyDataHander.isUserExit(id);
 		boolean nameExist = MyDataHander.isNameExit(name);
-		return idExist&&nameExist;
+		boolean result = idExist || nameExist;
+		return result;
 	}
 
 	/**

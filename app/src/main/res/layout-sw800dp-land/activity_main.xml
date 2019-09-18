@@ -129,21 +129,21 @@
             android:id="@+id/multiGroupHistogramView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="50dp"
             app:chartPaddingTop="15dp"
             app:coordinateAxisColor="#FF727884"
             app:coordinateAxisWidth="1dp"
             app:distanceFormGroupNameToAxis="10dp"
             app:distanceFromValueToHistogram="10dp"
-            app:groupInterval="10dp"
+            app:groupInterval="20dp"
             app:groupNameTextColor="#FF727884"
-            app:groupNameTextSize="13sp"
-            app:histogramHistogramWidth="20dp"
-            app:histogramInterval="15dp"
+            app:groupNameTextSize="@dimen/content_text_normal_small"
+            app:histogramHistogramWidth="50dp"
+            app:histogramInterval="30dp"
             app:histogramPaddingEnd="15dp"
             app:histogramValueDecimalCount="ZERO"
             app:histogramValueTextColor="#FF727884"
-            app:histogramValueTextSize="10sp" />
+            app:histogramValueTextSize="@dimen/content_text_small" />
 
     </LinearLayout>
 
