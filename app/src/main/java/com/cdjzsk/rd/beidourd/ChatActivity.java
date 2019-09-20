@@ -134,11 +134,8 @@ public class ChatActivity extends AppCompatActivity {
 		    @Override
 		    public void onClick(View view) {
 			    Intent intent = new Intent(ChatActivity.this, EditContactActivity.class);
-/*			    intent.putExtra("otherId",otherId);
-			    intent.putExtra("otherName",nameText.getText().toString());*/
-				String test = null;
-			    intent.putExtra("otherId",test);
-			    intent.putExtra("otherName",test);
+			    intent.putExtra("otherId",otherId);
+			    intent.putExtra("otherName",nameText.getText().toString());
 			    startActivity(intent);
 		    }
 	    });
