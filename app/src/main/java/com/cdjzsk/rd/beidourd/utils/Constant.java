@@ -6,6 +6,8 @@ public class Constant {
 
 	/** false时为测试模式 */
 	public static final boolean TEST_UI_MODEL = true;
+	/** 通信测试收发指令*/
+	public static final String TEST_MESSAGE = "北斗模块通信测试[混发模式]-!@#%^&*()~1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ.";
 	/** 读卡指令*/
 	public static final String ICA = "CCICA,0,00";
 	/** 打开波束功率*/
@@ -32,4 +34,6 @@ public class Constant {
 	public final static int OTHER_IMAGE = R.drawable.icon_d;
 	/** 消息发送成功标志*/
 	public final static String MESSAGE_SEND_SUCCESS = "Y";
+	/** 本机用户*/
+	public final static String MY_NAME = "本机用户";
 }

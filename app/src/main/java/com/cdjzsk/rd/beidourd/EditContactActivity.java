@@ -77,8 +77,9 @@ public class EditContactActivity extends AppCompatActivity {
 				String id = cardId.getText().toString();
 				String name = contactName.getText().toString();
 				MyDataHander.deleteContactById(id);
-				String Context = "用户" + id + name + "删除成功!";
-				Toast.makeText(EditContactActivity.this, Context, Toast.LENGTH_SHORT).show();
+				StringBuilder toastMessage = new StringBuilder();
+				toastMessage.append("用户").append(name).append("(").append(id).append(")").append("删除成功！");
+				Toast.makeText(EditContactActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
 				finish();
 			}
 		});

@@ -30,4 +30,6 @@
     <color name="message_pressed">#1E90FF</color>
     <color name="SOS_normal">#ff4043</color>
     <color name="SOS_pressed">#ff0000</color>
+    <color name="test_normal">#3CB371</color>
+    <color name="test_pressed">#2E8B57</color>
 </resources>

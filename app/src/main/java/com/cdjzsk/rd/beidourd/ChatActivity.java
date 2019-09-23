@@ -574,6 +574,16 @@ public class ChatActivity extends AppCompatActivity {
 
 			//通知适配器更新
 			contactAdapter.notifyDataSetChanged();
+		} else {
+			//清空联系人
+			contactShowInfo.clear();
+			//通知联系人列表适配器更新
+			contactAdapter.notifyDataSetChanged();
+			//清空聊天对话信息
+			displayMessageData.clear();
+			//通知聊天信息更新
+			chatadapter.notifyDataSetChanged();
+
 		}
 	}
 

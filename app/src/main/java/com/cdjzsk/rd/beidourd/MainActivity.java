@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Button;
@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 	Button messageButton;
 	@BindView(R.id.sosButton)
 	Button sosButton;
-	private AlertDialog.Builder builder;
-	private AlertDialog alertDialog;
+	@BindView(R.id.testButton)
+	Button testButton;
 
 	/** 水平监听器 */
 	private OrientationEventListener orientationEventListener;
@@ -67,7 +67,10 @@ public class MainActivity extends AppCompatActivity {
 	public SerialPortUtils serialPortUtils;
 	/** 数据库操作类 */
 	private MyDataHander myDataHander;
-
+	/** 通信测试的计时器*/
+	public TimeCountMain timeCount;
+	/** 记录通信测试按钮的点击状态*/
+	boolean testButtonState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +107,17 @@ public class MainActivity extends AppCompatActivity {
 
 		});
 		messageButton.setClickable(false);
+		//点击通信测试按钮，测试收发一条数据
+		testButtonState = false;
+		testButton.setOnClickListener((View view) ->{
+			SerialPortUtils.sendMessage(mCardId,Constant.TEST_MESSAGE);
+			testButtonState = true;
+			Toast.makeText(this, "测试短信已发送!",Toast.LENGTH_SHORT).show();
+		});
+
 		//点击SOS按钮，暂时不做处理
 		sosButton.setOnClickListener((View view) -> {
-			Log.d("SOS", "Click SOS Button");
-			System.out.println("this is lambda");
-			Toast.makeText(this, "SOS功能已触发!",Toast.LENGTH_SHORT);
+			Toast.makeText(this, "SOS功能已触发!",Toast.LENGTH_SHORT).show();
 		});
 		sosButton.setClickable(false);
 
@@ -230,10 +239,25 @@ public class MainActivity extends AppCompatActivity {
 			public void run() {
 				if (msg.contains("BDICI")) {
 					String[] msgList = msg.split(",");
+					//本机联系人
 					mCardId = msgList[1];
 					String freqy = msgList[5];
 					cardId.setText(mCardId);
 					frequency.setText(freqy);
+					//用自己的ID去查询是否是已有联系人
+					boolean save = myDataHander.isUserExit(mCardId);
+					//不存在，保存联系人
+					if (!save) {
+						User user = new User();
+						user.setUserId(mCardId);
+						//暂时先把名字设置为卡号
+						user.setUserName(Constant.MY_NAME);
+						//暂时先把头像设置为统一头像
+						user.setImage(Constant.MY_IMAGE);
+						//保存用户
+						myDataHander.addUser(user);
+					}
+					testButton.setClickable(true);
 					messageButton.setClickable(true);
 					sosButton.setClickable(true);
 				}
@@ -274,9 +298,27 @@ public class MainActivity extends AppCompatActivity {
 						//暂时先把名字设置为卡号
 						user.setUserName(userId);
 						//暂时先把头像设置为统一头像
-						user.setImage(R.drawable.hdimg_1);
+						user.setImage(Constant.MY_IMAGE);
 						//保存用户
 						myDataHander.addUser(user);
+					}
+					if (testButtonState) {
+						testButtonState = false;
+						if (mCardId.equals(userId) && Constant.TEST_MESSAGE.equals(message)) {
+							AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).create();//创建对话框
+							dialog.setIcon(R.mipmap.ic_launcher);//设置对话框icon
+							dialog.setTitle("通信测试");//设置对话框标题
+							dialog.setMessage("北斗短报文通信测试（收发）测试通过！");//设置文字显示内容
+							//分别设置三个button
+							dialog.setButton(DialogInterface.BUTTON_POSITIVE,"退出", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.dismiss();//关闭对话框
+								}
+							});
+							dialog.show();//显示对话框
+						}
+
 					}
 				}
 				if (msg.contains("BDBSI")) {
@@ -364,5 +406,30 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+	}
+
+	/**
+	 * 内部类-用于给按钮设置定时
+	 */
+	class TimeCountMain extends CountDownTimer {
+
+		private Button button;
+
+		public TimeCountMain(long millisInFuture, long countDownInterval, Button button) {
+			super(millisInFuture, countDownInterval);
+			this.button = button;
+		}
+		@Override
+		public void onTick(long millisUntilFinished) {
+			this.button.setClickable(false);
+			this.button.setText("("+millisUntilFinished / 1000 +") ");
+			this.button.setTextColor(Color.parseColor("#ff0000"));
+		}
+		@Override
+		public void onFinish() {
+			this.button.setText("发送");
+			this.button.setClickable(true);
+			this.button.setTextColor(Color.parseColor("#ffffff"));
+		}
 	}
 }
