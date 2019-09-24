@@ -227,7 +227,23 @@ public class MainActivity extends AppCompatActivity {
 		});
 		mSerialClient = SerialPortUtils.getSerialClient();
 	}
+	/**
+	 * 消息发送状态
+	 * @param state1
+	 * @param state2
+	 */
+	private void sendMassageState(String state1, String state2, int lastTime) {
 
+		if (Constant.MESSAGE_SEND_SUCCESS.equals(state1)) {
+			Toast.makeText(this, "消息发送成功！", Toast.LENGTH_SHORT).show();
+			//消息发送成功，倒计时开始
+		} else if (!Constant.MESSAGE_SEND_SUCCESS.equals(state1) && lastTime > 0){
+			String context = "发送频度未到，还需等待"+ lastTime + "秒";
+			Toast.makeText(this, context, Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(this, "消息发送失败！", Toast.LENGTH_SHORT).show();
+		}
+	}
 	/**
 	 * 处理接收到的数据，并且更改UI的显示
 	 *
@@ -262,7 +278,11 @@ public class MainActivity extends AppCompatActivity {
 					sosButton.setClickable(true);
 				}
 				if (msg.contains("BDFKI")) {
-					String[] result = msg.split(",");
+					String[]  result = msg.split(",");
+					if (result.length >= 6 && "TXA".equals(result[1])) {
+						int time = Integer.valueOf(result[5].substring(0,4));
+						sendMassageState(result[2],result[3], time);
+					}
 				}
 				if (msg.contains("BDTXR")) {
 					String[] msgList = msg.split(",");

@@ -60,6 +60,8 @@ public class ChatActivity extends AppCompatActivity {
 	private ListView contactListView;
 	/** 搜索框 */
 	private SearchView searchView;
+	/** 消息发送按钮 */
+	private Button btn_send;
 	/** 聊天对方的Id*/
     private String otherId;
     /**本机的卡号Id*/
@@ -184,7 +186,10 @@ public class ChatActivity extends AppCompatActivity {
 				if(msg.contains("BDFKI"))
 				{
 					String[]  result = msg.split(",");
-					sendMassageState(result[2],result[3]);
+					if (result.length >= 6 && "TXA".equals(result[1])) {
+						int time = Integer.valueOf(result[5].substring(0,4));
+						sendMassageState(result[2],result[3], time);
+					}
 				}
 				/**
 				 *  在聊天页面接收到消息需要3重处理
@@ -213,22 +218,30 @@ public class ChatActivity extends AppCompatActivity {
 	 * @param state1
 	 * @param state2
 	 */
-	private void sendMassageState(String state1, String state2) {
+	private void sendMassageState(String state1, String state2, int lastTime) {
 
 		if (Constant.MESSAGE_SEND_SUCCESS.equals(state1)) {
-			Toast.makeText(this, "消息发送成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "消息发送成功！", Toast.LENGTH_SHORT).show();
 			//消息发送成功，倒计时开始
 			timeCount.start();
+		} else if (!Constant.MESSAGE_SEND_SUCCESS.equals(state1) && lastTime > 0){
+			//取消以前的按钮倒计时
+			timeCount.cancel();
+			//按照最新的计时
+			TimeCount newTimeCount = new TimeCount(lastTime * 1000,1000,btn_send);
+			newTimeCount.start();
+			String context = "频度未到，还需等待"+ lastTime + "秒";
+			Toast.makeText(this, context, Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(this, "消息发送失败", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "消息发送失败！", Toast.LENGTH_SHORT).show();
 		}
 	}
     private void initComponents() {
 
 	    /**  发送信息按钮*/
-        Button btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
+	    btn_send = findViewById(R.id.activity_wechat_chat_btn_send);
 		/** 给发送按钮设置发送倒计时 */
-	    timeCount = new TimeCount(60000,1000,btn_send);
+	    timeCount = new TimeCount(60*1000,1000,btn_send);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
 
@@ -448,8 +461,7 @@ public class ChatActivity extends AppCompatActivity {
 			messageInfo.setReceiveId(myId);
 		}
 		String userId = "";
-		if (msgList.length >= 5)
-		{
+		if (msgList.length >= 5) {
 			//发送ID
 			userId = msgList[2];
 			messageInfo.setSendId(userId);
