@@ -5,7 +5,7 @@ import com.cdjzsk.rd.beidourd.R;
 public class Constant {
 
 	/** false时为测试模式 */
-	public static final boolean TEST_UI_MODEL = false;
+	public static final boolean TEST_UI_MODEL = true;
 	/** 通信测试收发指令*/
 	public static final String TEST_MESSAGE = "北斗模块通信测试[混发模式]-!@#%^&*()~1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ.";
 	/** 读卡指令*/
