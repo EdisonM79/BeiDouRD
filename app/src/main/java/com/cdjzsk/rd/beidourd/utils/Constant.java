@@ -23,17 +23,19 @@ public class Constant {
 	/** 消息非本机发送*/
 	public static final String MESSAGE_NOTMYSEND = "0";
 	/** 收到的消息标志*/
-	public final static int TYPE_RECEIVER_MSG = 0x21;
+	public static final int TYPE_RECEIVER_MSG = 0x21;
 	/** 发送的消息标志*/
-	public final static int TYPE_SENDER_MSG = 0x22;
+	public static final int TYPE_SENDER_MSG = 0x22;
 	/** 时间戳标志*/
-	public final static int TYPE_TIME_STAMP = 0x23;
+	public static final int TYPE_TIME_STAMP = 0x23;
 	/** 我的聊天头像*/
-	public final static int MY_IMAGE = R.drawable.icon_d;
+	public static final int MY_IMAGE = R.drawable.icon_d;
 	/** 其他人聊天头像*/
-	public final static int OTHER_IMAGE = R.drawable.icon_d;
+	public static final int OTHER_IMAGE = R.drawable.icon_d;
 	/** 消息发送成功标志*/
-	public final static String MESSAGE_SEND_SUCCESS = "Y";
+	public static final String MESSAGE_SEND_SUCCESS = "Y";
 	/** 本机用户*/
-	public final static String MY_NAME = "本机用户";
+	public static final String MY_NAME = "本机用户";
+	/** 设置信息最长byte字符长度 */
+	public static final int MAX_BYTE = 70;
 }

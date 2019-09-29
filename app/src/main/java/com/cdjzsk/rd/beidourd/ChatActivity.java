@@ -10,9 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -35,6 +35,7 @@ import com.cdjzsk.rd.beidourd.utils.SerialPortUtils;
 import com.jzsk.seriallib.conn.MessageListener;
 import com.jzsk.seriallib.msg.BaseMessage;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -236,6 +237,32 @@ public class ChatActivity extends AppCompatActivity {
 			Toast.makeText(this, "消息发送失败！", Toast.LENGTH_SHORT).show();
 		}
 	}
+	public static String getWholeText(String text, int byteCount){
+		try {
+			if (text != null && text.getBytes("GB2312").length > byteCount) {
+				char[] tempChars = text.toCharArray();
+				int sumByte = 0;
+				int charIndex = 0;
+				for (int i = 0, len = tempChars.length; i < len; i++) {
+					char itemChar = tempChars[i];
+					// 根据Unicode值，判断它占用的字节数
+					if (itemChar >= 0x0000 && itemChar <= 0x007F) {
+						sumByte += 1;
+					} else {
+						sumByte += 2;
+					}
+					if (sumByte > byteCount) {
+						charIndex = i;
+						break;
+					}
+				}
+				return String.valueOf(tempChars, 0, charIndex);
+			}
+		} catch (UnsupportedEncodingException e) {
+		}
+		return text;
+	}
+
     private void initComponents() {
 
 	    /**  发送信息按钮*/
@@ -264,16 +291,36 @@ public class ChatActivity extends AppCompatActivity {
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.i("tag", "onTextChanged --- start -> " + start + " , count ->" + count + "，before ->" + before);
-                if (start == 0 && count > 0) {
-                	/*
-                	    这个地方做长度的监测
-                	 */
-                }
+	            Editable editable = et_msg.getText();
+	            int len = 0;
+	            try {
+		            len = editable.toString().getBytes("GB2312").length;
+	            } catch (Exception e) {
+	            	e.printStackTrace();
+	            }
+	            if(len > Constant.MAX_BYTE)
+	            {
+		            int selEndIndex = Selection.getSelectionEnd(editable);
+		            String str = editable.toString();
+		            //截取新字符串
+		            String newStr = getWholeText(str, Constant.MAX_BYTE);
+		            et_msg.setText(newStr);
+		            editable = et_msg.getText();
+
+		            //新字符串的长度
+		            int newLen = editable.length();
+		            //旧光标位置超过字符串长度
+		            if(selEndIndex > newLen)
+		            {
+			            selEndIndex = editable.length();
+		            }
+		            //设置新光标所在的位置
+		            Selection.setSelection(editable, selEndIndex);
+	            }
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
+
         });
 
 
