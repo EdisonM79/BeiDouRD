@@ -13,7 +13,7 @@ public class Constant {
 	/** 打开波束功率*/
 	public static final String OPEN_BSI = "CCRMO,BSI,2,1";
 	/** 关闭波束功率*/
-	public static final String CLOSE_BSI = "$CCRMO,BSI,1,1";
+	public static final String CLOSE_BSI = "CCRMO,BSI,1,1";
 	/** 消息已读标志*/
 	public static final String MESSAGE_READ = "1";
 	/** 消息未读标志*/
