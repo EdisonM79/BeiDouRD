@@ -6,8 +6,8 @@ android {
         applicationId "com.cdjzsk.rd.beidourd"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,7 +18,7 @@ android {
                 variant ->
                     variant.outputs.all {
                         //这里修改apk文件名
-                        outputFileName = "${variant.name}-v${variant.versionName}.apk"
+                        outputFileName = "BeiDouRD-v${variant.versionName}.apk"
                     }
             }
         }
