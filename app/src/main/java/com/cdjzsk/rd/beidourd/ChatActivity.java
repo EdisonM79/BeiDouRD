@@ -330,6 +330,10 @@ public class ChatActivity extends AppCompatActivity {
 	    btn_send.setOnClickListener((v) -> {
 		    //将发送的信息显示到聊天界面，并且清除发送文本
 		    String sendMsg = et_msg.getText().toString();
+		    //避免发送空白的消息
+		    if(("").equals(sendMsg) || null == sendMsg) {
+		    	return;
+		    }
 		    //我发送的消息
 		    MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), Constant.MY_IMAGE, Constant.TYPE_SENDER_MSG);
 		    displayMessageData.add(displayMessageData.size(), msgData);
@@ -344,7 +348,7 @@ public class ChatActivity extends AppCompatActivity {
 		    MessageInfo messageInfo = new MessageInfo();
 		    //设置成已读
 		    messageInfo.setRead(Constant.MESSAGE_READ);
-		    SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		    String time = sdf.format(new Date());
 		    //设置发送本地时间
 		    messageInfo.setTime(time);
@@ -434,7 +438,12 @@ public class ChatActivity extends AppCompatActivity {
 		        //联系人卡号
 		        csi.setCardId(contactId);
 		        //联系人头像
-		        csi.setHeadImage(contacts.get(i).getImage());
+		        //因为更改了数据库，所以检测一下头像是否是空值
+		        if (contacts.get(i).getImage() != Constant.OTHER_IMAGE){
+			        csi.setHeadImage(Constant.OTHER_IMAGE);
+		        } else {
+			        csi.setHeadImage(contacts.get(i).getImage());
+		        }
 		        if (null != messageInfo) {
 			        //最后一次消息内容
 			        csi.setLastMsg(messageInfo.getMessage());
@@ -456,11 +465,12 @@ public class ChatActivity extends AppCompatActivity {
 	        messageInfos = MyDataHander.getScrollMessageBySendIdOrReceiveId(myId,otherId);
 	        displayMessageData = new ArrayList<>();
 	        if (null != messageInfos) {
-		        //将这20条数据设置为已读
+		        //将数据设置为已读
 		        int length = messageInfos.size();
 		        for (int i = 0; i < length; i++) {
 			        MessageInfo messageInfo = messageInfos.get(length - i - 1);
-			        if (messageInfo.getRead().equals(Constant.MESSAGE_NOTREAD)) {
+			        //只要不是未读，都设置为已读，兼容其他情况
+			        if (!messageInfo.getRead().equals(Constant.MESSAGE_READ)) {
 				        MyDataHander.updateReadStateByMessageId(Constant.MESSAGE_READ, messageInfo.getId());
 			        }
 			        //Java中String类型转换成数据库中的日期类型，添加到数据库
@@ -562,7 +572,7 @@ public class ChatActivity extends AppCompatActivity {
 
 		/************更新联系人列表*************/
 	    //查询联系人列表里面是否有当前消息的发送人
-	    int listLength = contactShowInfo.size();
+		int listLength = contactShowInfo.size();
 	    Integer currentUserId = Integer.valueOf(messageInfo.getSendId());
 	    boolean isHave = false;
 		for (int i = 0; i < listLength; i++) {
