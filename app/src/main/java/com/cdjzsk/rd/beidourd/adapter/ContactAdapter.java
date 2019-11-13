@@ -149,4 +149,6 @@ public class ContactAdapter extends BaseAdapter implements Filterable {
             }
         }
     }
+
+
 }

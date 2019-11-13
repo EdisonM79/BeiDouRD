@@ -2,7 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:minHeight="60dp"
+    >
+
 
     <TextView
         android:id="@+id/item_wechat_msg_iv_time_stamp"
@@ -17,39 +21,11 @@
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/content_text_small" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/item_wechat_msg_layout_receiver"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="15dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/item_wechat_msg_iv_receiver_profile"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/stranger" />
-
-        <TextView
-            android:id="@+id/item_wechat_msg_tv_receiver_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:background="@drawable/receive_msg_bg"
-            android:clickable="true"
-            android:gravity="center_vertical"
-            android:minHeight="45dp"
-            android:text="@string/nullMsg"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/content_text_normal" />
-    </LinearLayout>
-
     <RelativeLayout
         android:id="@+id/item_wechat_msg_layout_sender"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_margin="15dp"
         android:gravity="center_vertical">
 
@@ -75,6 +51,5 @@
             android:layout_marginTop="13dp"
             android:src="@drawable/stranger" />
     </RelativeLayout>
-
 
 </LinearLayout>
