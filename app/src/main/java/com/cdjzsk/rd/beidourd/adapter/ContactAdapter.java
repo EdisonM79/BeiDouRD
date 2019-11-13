@@ -77,8 +77,10 @@ public class ContactAdapter extends BaseAdapter implements Filterable {
         vh.username.setText(contactInfo.getUsername());
         vh.lastMsg.setText(contactInfo.getLastMsg());
         vh.mute.setVisibility(View.GONE);
+        //设置为默认不显示小红点
+        vh.badge.setVisibility(View.GONE);
 
-        if (contactInfo.isRead()) {
+        if (contactInfo.isRead() || null == contactInfo.getLastMsg()) {
             //isRead为true的时候，不显示红点
             vh.badge.setVisibility(View.GONE);
         } else {

@@ -132,6 +132,7 @@ public class ChatActivity extends AppCompatActivity {
 	    addContact = findViewById(R.id.addContact);
 	    /** 编辑用户的按钮 */
 	    editContact = findViewById(R.id.activity_wechat_chat_profile);
+
 	    //编辑用户按钮点击事件
 	    editContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -142,7 +143,6 @@ public class ChatActivity extends AppCompatActivity {
 			    startActivity(intent);
 		    }
 	    });
-
 	    //添加用户按钮点击事件
 	    addContact.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -271,7 +271,7 @@ public class ChatActivity extends AppCompatActivity {
 	    timeCount = new TimeCount(60*1000,1000,btn_send);
 	    /**  返回按钮*/
 	    ImageView iv_back = findViewById(R.id.activity_wechat_chat_back);
-
+		//返回按钮点击事件
 	    iv_back.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View view) {
@@ -626,7 +626,12 @@ public class ChatActivity extends AppCompatActivity {
 				//联系人卡号
 				csi.setCardId(contactId);
 				//联系人头像
-				csi.setHeadImage(contacts.get(i).getImage());
+				//因为更改了数据库，所以检测一下头像是否是空值
+				if (contacts.get(i).getImage() != Constant.OTHER_IMAGE){
+					csi.setHeadImage(Constant.OTHER_IMAGE);
+				} else {
+					csi.setHeadImage(contacts.get(i).getImage());
+				}
 				if (null != messageInfo) {
 					//最后一次消息内容
 					csi.setLastMsg(messageInfo.getMessage());

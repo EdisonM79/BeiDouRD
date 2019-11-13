@@ -18,7 +18,7 @@
         android:layout_gravity="center"
         android:layout_height="@dimen/wechat_img_height"
         android:layout_centerVertical="true"
-        android:src="@drawable/hdimg_3" />
+        android:src="@drawable/icon_d" />
 
         <TextView
             android:id="@+id/item_wechat_main_iv_unread"
