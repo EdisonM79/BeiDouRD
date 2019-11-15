@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="90dp">
 
     <FrameLayout
         android:id="@+id/item_wechat_main_layout_headimg"
@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/item_wechat_main_iv_headimg"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:src="@drawable/icon_d" />
@@ -57,8 +57,8 @@
             android:layout_height="0dp"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:singleLine="true"
             android:ellipsize="end"
+            android:singleLine="true"
             android:text="@string/default_message"
             android:textSize="@dimen/content_text_14sp" />
 

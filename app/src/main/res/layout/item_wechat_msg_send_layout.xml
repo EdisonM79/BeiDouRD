@@ -2,9 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:minHeight="60dp"
+    android:minHeight="45dp"
     >
 
 
@@ -25,8 +24,8 @@
         android:id="@+id/item_wechat_msg_layout_sender"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_margin="15dp"
+        android:layout_weight="1"
         android:gravity="center_vertical">
 
         <TextView
@@ -45,8 +44,8 @@
 
         <ImageView
             android:id="@+id/item_wechat_msg_iv_sender_profile"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="13dp"
             android:src="@drawable/stranger" />
