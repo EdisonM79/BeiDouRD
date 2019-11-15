@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -156,6 +157,8 @@ public class ChatActivity extends AppCompatActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
+
+		Log.e("onRestart", "updateContactList()");
 		updateContactList();
 	}
 
@@ -335,7 +338,7 @@ public class ChatActivity extends AppCompatActivity {
 		    	return;
 		    }
 		    //我发送的消息
-		    MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), Constant.MY_IMAGE, Constant.TYPE_SENDER_MSG);
+		    MsgData msgData = new MsgData(sendMsg, HelpUtils.getCurrentMillisTime(), Constant.MY_IMAGE, Constant.MESSAGE_MYSEND);
 		    displayMessageData.add(displayMessageData.size(), msgData);
 		    chatadapter.notifyDataSetChanged();
 		    rv.scrollToPosition(displayMessageData.size() - 1);
@@ -408,12 +411,12 @@ public class ChatActivity extends AppCompatActivity {
 					    //设置消息内容
 					    msgData.setMsg(messageInfo.getMessage());
 					    //设置消息类别
-					    int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND) ? Constant.TYPE_SENDER_MSG : Constant.TYPE_RECEIVER_MSG;
-					    msgData.setMsgType(msgType);
+					    msgData.setMsgType(messageInfo.getMySend());
 					    msgData.setProfile_res(Constant.OTHER_IMAGE);
 					    displayMessageData.add(k, msgData);
 				    }
 			    }
+			    Log.e("onItemClick", "419");
 			    chatadapter.notifyDataSetChanged();
 			    rv.scrollToPosition(displayMessageData.size() - 1);
 
@@ -492,8 +495,7 @@ public class ChatActivity extends AppCompatActivity {
 			        //设置消息内容
 			        msgData.setMsg(messageInfo.getMessage());
 			        //设置消息类别
-			        int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND)?Constant.TYPE_SENDER_MSG:Constant.TYPE_RECEIVER_MSG;
-			        msgData.setMsgType(msgType);
+			        msgData.setMsgType(messageInfo.getMySend());
 			        msgData.setProfile_res(Constant.OTHER_IMAGE);
 			        displayMessageData.add(i, msgData);
 		        }
@@ -687,8 +689,7 @@ public class ChatActivity extends AppCompatActivity {
 		//设置消息内容
 		msgData.setMsg(messageInfo.getMessage());
 		//设置消息类别
-		int msgType = messageInfo.getMySend().equals(Constant.MESSAGE_MYSEND)?Constant.TYPE_SENDER_MSG:Constant.TYPE_RECEIVER_MSG;
-		msgData.setMsgType(msgType);
+		msgData.setMsgType(messageInfo.getMySend());
 		msgData.setProfile_res(Constant.OTHER_IMAGE);
 		displayMessageData.add(displayMessageData.size(), msgData);
 		chatadapter.notifyDataSetChanged();

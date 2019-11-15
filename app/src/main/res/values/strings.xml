@@ -5,8 +5,8 @@
     <string name="btn_close">关闭串口</string>
     <string name="btn_select">查询数据</string>
 
-    <string name="default_message">[Audio]</string>
-    <string name="blank_username">Fiona</string>
+    <string name="default_message">长江1号</string>
+    <string name="blank_username">北斗短报文</string>
     <string name="mark_unread">标为未读</string>
     <string name="sticky_top">置顶聊天</string>
     <string name="delete_conversation">删除聊天</string>

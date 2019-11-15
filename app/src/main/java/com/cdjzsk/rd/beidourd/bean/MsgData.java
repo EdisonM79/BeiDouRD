@@ -8,24 +8,24 @@ public class MsgData {
     private String msg;
     private long timeStamp;
     private int profile_res;
-    private int msgType;
+    private String msgType;
 
     public MsgData() {
 
     }
 
-    public MsgData(String msg, long timeStamp, int hd_img_res, int msgType) {
+    public MsgData(String msg, long timeStamp, int hd_img_res, String msgType) {
         this.msg = msg;
         this.timeStamp = timeStamp;
         this.profile_res = hd_img_res;
         this.msgType = msgType;
     }
 
-    public int getMsgType() {
+    public String getMsgType() {
         return msgType;
     }
 
-    public void setMsgType(int msgType) {
+    public void setMsgType(String msgType) {
         this.msgType = msgType;
     }
 

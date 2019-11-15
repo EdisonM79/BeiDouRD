@@ -283,7 +283,7 @@ class MessageReader {
 						byte[] cacheBytes = new byte[cache.limit() - cache.position()];
 						cache.get(cacheBytes);
 						Log.w(TAG, String.format("serial read=[%s]",new String(raw)));
-						Log.w(TAG, String.format("serial read=[%s]",ArrayUtils.bytesToHexString(raw)));
+						//Log.w(TAG, String.format("serial read=[%s]",ArrayUtils.bytesToHexString(raw)));
 						com.jzsk.seriallib.msg.msgv21.Message msg = new com.jzsk.seriallib.msg.msgv21.Message(raw);
 						processMessage(msg);
 						if (messageListener != null) {
